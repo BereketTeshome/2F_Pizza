@@ -71,7 +71,7 @@ const LogIn = () => {
     <Box sx={{ width: "100%", display: "flex" }}>
       <Box
         sx={{
-          background: "#171B36",
+          background: "#ff9921",
           width: "50%",
           display: "flex",
           justifyContent: "center",
@@ -82,10 +82,8 @@ const LogIn = () => {
         <Box
           component="img"
           sx={{
-            height: 233,
-            width: 350,
-            maxHeight: { xs: 233, md: 167 },
-            maxWidth: { xs: 350, md: 250 },
+            height: 200,
+            width: 200,
           }}
           alt="Login Page Image"
           src="/logo.png"
@@ -119,7 +117,11 @@ const LogIn = () => {
             alt="login icon"
             src="/logo.png"
           />
-          Pizza
+          <Typography
+            sx={{ color: "#af5901", fontSize: "1.5rem", fontWeight: "bold" }}
+          >
+            2F-Pizza
+          </Typography>
         </Typography>
         <Typography variant="h6" sx={{ paddingY: 1 }}>
           Login
@@ -169,7 +171,7 @@ const LogIn = () => {
 
         <Button
           sx={{
-            background: `${isLoading ? "lightgray" : "#00ABFF"}`,
+            background: `${isLoading ? "lightgray" : "#ff9921"}`,
             cursor: `${isLoading ? "not-allowed" : "pointer"}`,
             color: "#fff",
             ":hover": {
@@ -182,7 +184,14 @@ const LogIn = () => {
         </Button>
         <Typography sx={{ textAlign: "center", marginTop: 2 }}>
           Don't have an account?{" "}
-          <Link href="/Register" sx={{ textDecoration: "none" }}>
+          <Link
+            href="/Register"
+            sx={{
+              textDecoration: "none",
+              color: "#ff9921",
+              fontWeight: "bold",
+            }}
+          >
             Sign up
           </Link>
         </Typography>

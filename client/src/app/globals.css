@@ -2,9 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: #fff8f1;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
 }
 .swiper {
   width: 100%;
@@ -27,6 +43,50 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Vertical scrollbar */
+::-webkit-scrollbar {
+  width: 5px; /* Width of vertical scrollbar */
+}
+
+/* Horizontal scrollbar */
+::-webkit-scrollbar:horizontal {
+  height: 5px; /* Height of horizontal scrollbar */
+}
+
+/* Track for vertical scrollbar */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  background: #f1f1f1;
+}
+
+/* Track for horizontal scrollbar */
+::-webkit-scrollbar:horizontal-track {
+  box-shadow: inset 0 0 5px grey;
+  background: #f1f1f1;
+}
+
+/* Thumb for vertical scrollbar */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #fff, orange);
+  border-radius: 10px;
+}
+
+/* Thumb for horizontal scrollbar */
+::-webkit-scrollbar:horizontal-thumb {
+  background: linear-gradient(180deg, #fff, orange);
+  border-radius: 10px;
+}
+
+/* Thumb hover for vertical scrollbar */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Thumb hover for horizontal scrollbar */
+::-webkit-scrollbar:horizontal-thumb:hover {
+  background: #555;
 }
 
 /* :root {

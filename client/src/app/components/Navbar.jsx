@@ -30,12 +30,6 @@ const Navbar = () => {
             href="/Orders"
             sx={{ "&:hover": { color: "orange" } }}
           />
-          <Tab
-            label="Who we are"
-            component={Link}
-            href="/About"
-            sx={{ "&:hover": { color: "orange" } }}
-          />
         </Tabs>
 
         <Button variant="contained" color="warning" sx={{ fontWeight: "bold" }}>

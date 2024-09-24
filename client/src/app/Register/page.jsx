@@ -8,14 +8,12 @@ import {
   Checkbox,
   Link,
 } from "@mui/material";
-import Divider from "@mui/material/Divider";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { z } from "zod";
 
 const schema = z
   .object({
-    name: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z
@@ -32,7 +30,6 @@ const schema = z
 const SignUp = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -79,7 +76,7 @@ const SignUp = () => {
     <Box sx={{ width: "100%", display: "flex" }}>
       <Box
         sx={{
-          background: "#171B36",
+          background: "#ff9921",
           width: "50%",
           display: "flex",
           justifyContent: "center",
@@ -90,10 +87,8 @@ const SignUp = () => {
         <Box
           component="img"
           sx={{
-            height: 250,
-            width: 250,
-            maxHeight: { xs: 233, md: 167 },
-            maxWidth: { xs: 350, md: 250 },
+            height: 200,
+            width: 200,
           }}
           alt="Sign up Page Image"
           src="/logo.png"
@@ -114,7 +109,7 @@ const SignUp = () => {
             display: "flex",
             alignItems: "center",
             gap: 1,
-            marginBottom: 1,
+            marginBottom: 4,
           }}
           variant="h5"
         >
@@ -127,23 +122,18 @@ const SignUp = () => {
             alt="login icon"
             src="/logo.png"
           />{" "}
-          Pizza
+          <Typography
+            sx={{
+              color: "#af5901",
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}
+          >
+            2F-Pizza
+          </Typography>
         </Typography>
-        <Typography variant="h6" sx={{ paddingY: 1, color: "#555" }}>
-          Sign Up as Owner
-        </Typography>
-        <Divider sx={{ marginBottom: 3 }} />
+
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <TextField
-            label="Name"
-            variant="outlined"
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            error={!!errors.name}
-            helperText={errors.name}
-          />
           <TextField
             label="Email address"
             variant="outlined"
@@ -202,7 +192,7 @@ const SignUp = () => {
 
         <Button
           sx={{
-            background: `${isLoading ? "lightgray" : "#00ABFF"}`,
+            background: `${isLoading ? "lightgray" : "#ff9921"}`,
             cursor: `${isLoading ? "not-allowed" : "pointer"}`,
             color: "#fff",
             ":hover": {
@@ -216,7 +206,7 @@ const SignUp = () => {
         </Button>
         <Typography sx={{ textAlign: "center", marginTop: 2 }}>
           Already have an account?{" "}
-          <Link href="/Login" sx={{ textDecoration: "none" }}>
+          <Link href="/Login" sx={{ textDecoration: "none", color: "#ff9921" }}>
             Login
           </Link>
         </Typography>

@@ -13,6 +13,7 @@ const Hero = () => {
         pb: 10,
         background: "linear-gradient(to bottom, white, #fed2a5, white)", // Gradient background
         width: "100%",
+        overflow: "hidden",
       }}
     >
       <Box sx={{ maxWidth: "600px", ml: 6 }}>
