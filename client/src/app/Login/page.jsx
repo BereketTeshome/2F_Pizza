@@ -183,7 +183,7 @@ const LogIn = () => {
           {isLoading ? "Logging..." : "Login"}
         </Button>
         <Typography sx={{ textAlign: "center", marginTop: 2 }}>
-          Don't have an account?{" "}
+          Don`&apos;`t have an account?{" "}
           <Link
             href="/Register"
             sx={{
