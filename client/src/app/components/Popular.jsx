@@ -1,3 +1,4 @@
+"use client";
 import {
   Box,
   Grid,
@@ -7,53 +8,67 @@ import {
   Card,
   Divider,
 } from "@mui/material";
-
-const pizzas = [
-  {
-    name: "Margherita",
-    ingredients: "Tomato, Mozzarella, Basil",
-    price: "100",
-    image: "/full_pizza.png",
-    user: { name: "John Doe", avatar: "/profile.png" },
-  },
-  {
-    name: "Pepperoni",
-    ingredients: "Pepperoni, Mozzarella, Tomato",
-    price: "120",
-    image: "/full_pizza.png",
-    user: { name: "Jane Smith", avatar: "/profile.png" },
-  },
-  {
-    name: "BBQ Chicken",
-    ingredients: "Chicken, BBQ Sauce, Onions",
-    price: "140",
-    image: "/full_pizza.png",
-    user: { name: "Alex Johnson", avatar: "/profile.png" },
-  },
-  {
-    name: "Margherita",
-    ingredients: "Tomato, Mozzarella, Basil",
-    price: "100",
-    image: "/full_pizza.png",
-    user: { name: "John Doe", avatar: "/profile.png" },
-  },
-  {
-    name: "Pepperoni",
-    ingredients: "Pepperoni, Mozzarella, Tomato",
-    price: "120",
-    image: "/full_pizza.png",
-    user: { name: "Jane Smith", avatar: "/profile.png" },
-  },
-  {
-    name: "BBQ Chicken",
-    ingredients: "Chicken, BBQ Sauce, Onions",
-    price: "140",
-    image: "/full_pizza.png",
-    user: { name: "Alex Johnson", avatar: "/profile.png" },
-  },
-];
+import { useRouter } from "next/navigation"; // If you're using Next.js
 
 const Popular = () => {
+  const router = useRouter();
+
+  const pizzas = [
+    {
+      name: "Margherita",
+      ingredients: "Tomato, Mozzarella, Basil",
+      price: "100",
+      image: "/full_pizza.png",
+      user: { name: "John Doe", avatar: "/profile.png" },
+    },
+    {
+      name: "Pepperoni",
+      ingredients: "Pepperoni, Mozzarella, Tomato",
+      price: "120",
+      image: "/full_pizza.png",
+      user: { name: "Jane Smith", avatar: "/profile.png" },
+    },
+    {
+      name: "BBQ Chicken",
+      ingredients: "Chicken, BBQ Sauce, Onions",
+      price: "140",
+      image: "/full_pizza.png",
+      user: { name: "Alex Johnson", avatar: "/profile.png" },
+    },
+    {
+      name: "Margherita",
+      ingredients: "Tomato, Mozzarella, Basil",
+      price: "100",
+      image: "/full_pizza.png",
+      user: { name: "John Doe", avatar: "/profile.png" },
+    },
+    {
+      name: "Pepperoni",
+      ingredients: "Pepperoni, Mozzarella, Tomato",
+      price: "120",
+      image: "/full_pizza.png",
+      user: { name: "Jane Smith", avatar: "/profile.png" },
+    },
+    {
+      name: "BBQ Chicken",
+      ingredients: "Chicken, BBQ Sauce, Onions",
+      price: "140",
+      image: "/full_pizza.png",
+      user: { name: "Alex Johnson", avatar: "/profile.png" },
+    },
+  ];
+
+  const handleOrderClick = (pizza) => {
+    // Create a URL with query parameters
+    const params = new URLSearchParams({
+      name: pizza.name,
+      ingredients: pizza.ingredients,
+      price: pizza.price,
+      image: pizza.image,
+    });
+
+    router.push(`/OrderDetail?${params.toString()}`);
+  };
   return (
     <Box
       sx={{
@@ -86,7 +101,6 @@ const Popular = () => {
                 scale: "0.9",
               }}
             >
-              {/* Circular Background with Pizza Image */}
               <Box
                 sx={{
                   width: 300,
@@ -102,15 +116,10 @@ const Popular = () => {
                 <img
                   src={pizza.image}
                   alt={pizza.name}
-                  style={{
-                    width: "87%",
-                    height: "87%",
-                    objectFit: "contain",
-                  }}
+                  style={{ width: "87%", height: "87%", objectFit: "contain" }}
                 />
               </Box>
 
-              {/* Pizza Name */}
               <Typography
                 variant="h6"
                 sx={{ textAlign: "start", width: "100%" }}
@@ -118,7 +127,6 @@ const Popular = () => {
                 {pizza.name}
               </Typography>
 
-              {/* Pizza Ingredients */}
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -127,7 +135,6 @@ const Popular = () => {
                 {pizza.ingredients}
               </Typography>
 
-              {/* Price and Order Button */}
               <Box
                 sx={{
                   display: "flex",
@@ -169,6 +176,7 @@ const Popular = () => {
                     py: 1.5,
                     fontSize: "1.3rem",
                   }}
+                  onClick={() => handleOrderClick(pizza)}
                 >
                   Order
                 </Button>
@@ -176,7 +184,6 @@ const Popular = () => {
 
               <Divider sx={{ width: "100%", mb: 2 }} />
 
-              {/* User Profile with Avatar */}
               <Box
                 sx={{
                   display: "flex",
