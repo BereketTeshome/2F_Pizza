@@ -4,14 +4,13 @@ import {
   Typography,
   IconButton,
   Button,
-  Modal,
-  TextField,
-  Switch,
   FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import AddUserModal from "./AddUserModal"; // Import the new modal component
 
 const User = () => {
   const [data, setData] = useState([
@@ -19,28 +18,30 @@ const User = () => {
       name: "John Doe",
       phoneNo: "555-1234",
       email: "john@example.com",
+      location: "New York",
+      role: "Admin",
       active: true,
     },
     {
       name: "Jane Smith",
       phoneNo: "555-5678",
       email: "jane@example.com",
+      location: "California",
+      role: "Earner",
       active: false,
     },
   ]);
 
   const [openAddUser, setOpenAddUser] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", phoneNo: "", email: "" });
 
   // Handle open/close for adding a new user modal
   const handleOpenAddUser = () => setOpenAddUser(true);
   const handleCloseAddUser = () => setOpenAddUser(false);
 
   // Handle adding a new user
-  const handleAddUser = () => {
+  const handleAddUser = (newUser) => {
     const newUserData = { ...newUser, active: true };
     setData([...data, newUserData]);
-    setNewUser({ name: "", phoneNo: "", email: "" });
     setOpenAddUser(false);
   };
 
@@ -82,6 +83,11 @@ const User = () => {
         size: 200,
       },
       {
+        accessorKey: "role",
+        header: "Role",
+        size: 150,
+      },
+      {
         accessorKey: "actions",
         header: "Actions",
         size: 250,
@@ -89,7 +95,15 @@ const User = () => {
           const index = row.index;
           const isActive = data[index].active;
           return (
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+                position: "relative",
+                left: "-20px",
+              }}
+            >
               {/* Toggle active/inactive status */}
               <FormControlLabel
                 sx={{
@@ -160,55 +174,11 @@ const User = () => {
       </Box>
 
       {/* Add User Modal */}
-      <Modal open={openAddUser} onClose={handleCloseAddUser}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 300,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 1,
-          }}
-        >
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Add New User
-          </Typography>
-          <TextField
-            fullWidth
-            label="Name"
-            value={newUser.name}
-            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Phone No."
-            value={newUser.phoneNo}
-            onChange={(e) =>
-              setNewUser({ ...newUser, phoneNo: e.target.value })
-            }
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Email"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-          <Button
-            onClick={handleAddUser}
-            variant="contained"
-            sx={{ bgcolor: "#ff8100" }}
-          >
-            Add User
-          </Button>
-        </Box>
-      </Modal>
+      <AddUserModal
+        open={openAddUser}
+        handleClose={handleCloseAddUser}
+        handleAddUser={handleAddUser}
+      />
     </Box>
   );
 };

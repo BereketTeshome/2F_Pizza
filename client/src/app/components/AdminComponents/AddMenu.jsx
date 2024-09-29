@@ -11,14 +11,21 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SuccessModal from "./SuccessModal"; // Import the SuccessModal component
+import axios from "axios";
+import { storage } from "../../../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 
 const AddMenu = () => {
+  const [pizzaName, setPizzaName] = useState("");
+  const [price, setPrice] = useState("");
   const [toppings, setToppings] = useState([
     { name: "Cheese", checked: false },
     { name: "Pepperoni", checked: false },
   ]);
   const [newTopping, setNewTopping] = useState("");
   const [pizzaPhoto, setPizzaPhoto] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false); // State to control modal visibility
 
   // Handle adding a new topping to the list
@@ -37,15 +44,62 @@ const AddMenu = () => {
   };
 
   // Handle file input for pizza photo
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
-    setPizzaPhoto(file);
+    if (file) {
+      setIsUploading(true); // Start the upload process
+      const uniqueName = `pizzas/${uuidv4()}-${file.name}`;
+      try {
+        const storageRef = ref(storage, uniqueName);
+        await uploadBytes(storageRef, file);
+        const downloadUrl = await getDownloadURL(storageRef);
+        setPizzaPhoto({ file, url: downloadUrl });
+      } catch (error) {
+        console.error("Error uploading image to Firebase:", error);
+      } finally {
+        setIsUploading(false); // Finish the upload process
+      }
+    }
   };
 
   // Handle form submit
-  const handleSubmit = () => {
-    // You can add logic to save the pizza data here
-    setModalOpen(true); // Open the success modal
+  const handleSubmit = async () => {
+    let imageUrl =
+      "https://againstthegraingourmet.com/cdn/shop/products/Pepperoni_Pizza_Beauty_900x.jpg?v=1658703726";
+
+    if (pizzaPhoto && pizzaPhoto.url) {
+      imageUrl = pizzaPhoto.url;
+    }
+
+    const selectedToppings = toppings
+      .filter((topping) => topping.checked)
+      .map((topping) => topping.name);
+
+    const pizzaData = {
+      pizza_name: pizzaName,
+      toppings: selectedToppings,
+      quantity: 1, // Quantity set to 1 by default
+      price: Number(price),
+      image: imageUrl,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:6543/pizzas",
+        pizzaData
+      );
+      console.log("Response from server:", response);
+
+      // Only open the success modal if a successful response (status code 200-299) is received
+      if (response.status >= 200 && response.status < 300) {
+        setModalOpen(true); // Open the success modal
+      } else {
+        throw new Error("Unexpected response status");
+      }
+    } catch (error) {
+      console.error("Error adding pizza menu:", error);
+      alert("Error adding menu");
+    }
   };
 
   return (
@@ -74,6 +128,8 @@ const AddMenu = () => {
           fullWidth
           label="Pizza Name"
           variant="outlined"
+          value={pizzaName}
+          onChange={(e) => setPizzaName(e.target.value)}
           sx={{ mb: 3 }}
         />
 
@@ -131,6 +187,8 @@ const AddMenu = () => {
           label="Price"
           variant="outlined"
           type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
           sx={{ mb: 3 }}
         />
 
@@ -167,7 +225,7 @@ const AddMenu = () => {
               <UploadFileIcon fontSize="large" />
             </IconButton>
             <Typography variant="body2">
-              {pizzaPhoto ? pizzaPhoto.name : "Upload pizza photo"}
+              {pizzaPhoto ? pizzaPhoto.file.name : "Upload pizza photo"}
             </Typography>
           </label>
         </Box>
@@ -184,6 +242,7 @@ const AddMenu = () => {
               "&:hover": { bgcolor: "#ff8100" },
             }}
             onClick={handleSubmit}
+            disabled={isUploading} // Disable button during image upload
           >
             SUBMIT
           </Button>

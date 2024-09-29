@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, InputBase, IconButton } from "@mui/material";
-import { FiSearch } from "react-icons/fi"; // Import search icon from react-icons
+import { FiSearch } from "react-icons/fi";
 
 const SearchBar = () => {
   return (
@@ -33,6 +33,9 @@ const SearchBar = () => {
           borderRadius: "50%",
           color: "white",
           marginLeft: "10px",
+          ":hover": {
+            backgroundColor: "blue",
+          },
         }}
         aria-label="search"
       >

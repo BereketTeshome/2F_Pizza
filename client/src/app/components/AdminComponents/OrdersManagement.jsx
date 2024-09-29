@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -10,38 +11,33 @@ import {
 import { MaterialReactTable } from "material-react-table";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckIcon from "@mui/icons-material/Check";
-import OrderDetailsModal from "./OrderDetailsModal"; // Import the new modal
+import OrderDetailsModal from "./OrderDetailsModal";
 
 const OrdersManagement = () => {
-  const [data, setData] = useState([
-    {
-      pizzaName: "Margherita",
-      topping: "Cheese",
-      quantity: 2,
-      customerNo: "+251977622890",
-      createdAt: "2024-09-23 13:45",
-      status: "preparing",
-    },
-    {
-      pizzaName: "Pepperoni",
-      topping: "Pepperoni",
-      quantity: 1,
-      customerNo: "+251977622890",
-      createdAt: "2024-09-22 15:30",
-      status: "ready",
-    },
-    {
-      pizzaName: "Hawaiian",
-      topping: "Pineapple, Ham",
-      quantity: 3,
-      customerNo: "+251977622890",
-      createdAt: "2024-09-21 11:15",
-      status: "delivered",
-    },
-  ]);
-
+  const [data, setData] = useState([]);
   const [openTopping, setOpenTopping] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:6543/order");
+        const formattedData = response.data.map((order) => ({
+          id: order.id,
+          pizzaName: order.pizza_name,
+          topping: order.toppings.join(", "),
+          quantity: order.quantity,
+          customerNo: order.customer_phone,
+          createdAt: order.created_at,
+          status: order.order_status.toLowerCase(), // Convert to lowercase for consistent status handling
+        }));
+        setData(formattedData);
+      } catch (error) {
+        console.error("Error fetching order data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleOpenTopping = (order) => {
     setSelectedOrder(order);
@@ -199,7 +195,7 @@ const OrdersManagement = () => {
   return (
     <Box sx={{ bgcolor: "#fff", p: 3, borderRadius: 1, boxShadow: 3, mt: 8 }}>
       <Typography sx={{ marginBottom: 1.2, fontWeight: "bold", color: "#666" }}>
-        Orders
+        Orders Management
       </Typography>
       <Box width={"100%"}>
         <MaterialReactTable

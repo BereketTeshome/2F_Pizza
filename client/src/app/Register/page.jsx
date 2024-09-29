@@ -30,11 +30,15 @@ const schema = z
 const SignUp = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
+    adminName: "",
+    restaurantName: "",
+    logo: "",
     email: "",
     password: "",
     confirmPassword: "",
     location: "",
     phone: "",
+    isAdmin: "",
   });
   const [errors, setErrors] = useState({});
   const [checked, setChecked] = useState(false);
@@ -53,7 +57,7 @@ const SignUp = () => {
     try {
       setIsLoading(true);
       schema.parse(formData);
-      await axios.post("https://3000/accounts/register", formData);
+      await axios.post("http://localhost:6543/accounts/register", formData);
       alert("User registered successfully!");
       setIsLoading(false);
       router.push("/Login");

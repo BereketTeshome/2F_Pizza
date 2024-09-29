@@ -11,6 +11,7 @@ import {
 import Divider from "@mui/material/Divider";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import axios from "axios";
 import Cookies from "universal-cookie";
 
 const loginSchema = z.object({
@@ -37,36 +38,34 @@ const LogIn = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch("https://3000/accounts/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post(
+        "http://localhost:6543/accounts/login",
+        { email, password }
+      );
       setIsLoading(false);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        // Assuming your API returns an error message in the response
-        if (errorData.message === "Incorrect password") {
-          setErrors({ password: ["Incorrect password"] });
-        } else {
-          throw new Error(errorData.message || "Login failed");
-        }
-      } else {
-        const data = await response.json();
-        rememberMe
-          ? cookie.set("user_token", data.token)
-          : sessionStorage.setItem("user_token", data.token);
-        router.push("/");
-        window.location.reload();
-      }
+      const data = response.data;
+      rememberMe
+        ? cookie.set("user_token", data.token)
+        : sessionStorage.setItem("user_token", data.token);
+
+      router.push("/");
     } catch (error) {
       setIsLoading(false);
-      setErrors({ general: error.message });
+      if (
+        error.response &&
+        error.response.data.message === "Incorrect password"
+      ) {
+        setErrors({ password: ["Incorrect password"] });
+      } else {
+        setErrors({
+          general:
+            error.response?.data.message || "Login failed. Please try again.",
+        });
+      }
     }
   };
+
   return (
     <Box sx={{ width: "100%", display: "flex" }}>
       <Box
@@ -111,8 +110,8 @@ const LogIn = () => {
           <Box
             component="img"
             sx={{
-              height: 28,
-              width: 40,
+              height: 32,
+              width: 32,
             }}
             alt="login icon"
             src="/logo.png"
@@ -183,7 +182,7 @@ const LogIn = () => {
           {isLoading ? "Logging..." : "Login"}
         </Button>
         <Typography sx={{ textAlign: "center", marginTop: 2 }}>
-          Don`&apos;`t have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             href="/Register"
             sx={{

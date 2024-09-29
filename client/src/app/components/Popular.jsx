@@ -8,7 +8,7 @@ import {
   Card,
   Divider,
 } from "@mui/material";
-import { useRouter } from "next/navigation"; // If you're using Next.js
+import { useRouter } from "next/navigation";
 
 const Popular = () => {
   const router = useRouter();

@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography, Modal } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-const SuccessModal = ({ open, handleClose }) => {
+const OrderSuccessPopup = ({ open, handleClose }) => {
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
@@ -54,11 +54,11 @@ const SuccessModal = ({ open, handleClose }) => {
 
         {/* Success message */}
         <Typography variant="h6" sx={{ color: "#05c605", fontWeight: "bold" }}>
-          You have uploaded the Pizza Successfully!
+          Your order has been successfully completed!
         </Typography>
       </Box>
     </Modal>
   );
 };
 
-export default SuccessModal;
+export default OrderSuccessPopup;

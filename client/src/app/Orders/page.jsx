@@ -1,53 +1,47 @@
-import {
-  Box,
-  Grid,
-  Typography,
-  Avatar,
-  Button,
-  Card,
-  Divider,
-} from "@mui/material";
-
-const pizzas = [
-  {
-    name: "Margherita",
-    ingredients: "Tomato, Mozzarella, Basil",
-    price: "100",
-    image: "/full_pizza.png",
-  },
-  {
-    name: "Pepperoni",
-    ingredients: "Pepperoni, Mozzarella, Tomato",
-    price: "120",
-    image: "/full_pizza.png",
-  },
-  {
-    name: "BBQ Chicken",
-    ingredients: "Chicken, BBQ Sauce, Onions",
-    price: "140",
-    image: "/full_pizza.png",
-  },
-  {
-    name: "Margherita",
-    ingredients: "Tomato, Mozzarella, Basil",
-    price: "100",
-    image: "/full_pizza.png",
-  },
-  {
-    name: "Pepperoni",
-    ingredients: "Pepperoni, Mozzarella, Tomato",
-    price: "120",
-    image: "/full_pizza.png",
-  },
-  {
-    name: "BBQ Chicken",
-    ingredients: "Chicken, BBQ Sauce, Onions",
-    price: "140",
-    image: "/full_pizza.png",
-  },
-];
+"use client";
+import { useState, useEffect } from "react";
+import { Box, Grid, Typography, Button, Card } from "@mui/material";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
+import NothingFound from "../components/NothingFound";
 
 const Orders = () => {
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState("");
+  const cookie = new Cookies();
+  const token = cookie.get("user_token");
+  const filteredToken = token ? token : sessionStorage?.getItem("user_token");
+  const decodedToken = filteredToken ? jwtDecode(filteredToken) : "";
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const customerPhone = decodedToken?.phone;
+
+      if (!customerPhone) {
+        setError("Phone number not found in cookies.");
+        return;
+      }
+
+      try {
+        const response = await axios.get("http://localhost:6543/order");
+        const filteredOrders = response.data.filter(
+          (order) => order.customer_phone === customerPhone
+        );
+        setOrders(filteredOrders);
+      } catch (error) {
+        setError("Failed to fetch orders.");
+        console.error(error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  if (orders.length < 1) {
+    return <NothingFound />;
+  }
+
   return (
     <Box
       sx={{
@@ -67,9 +61,21 @@ const Orders = () => {
         Order History
       </Typography>
 
+      {error && (
+        <Typography
+          sx={{
+            color: "red",
+            fontSize: "1.2rem",
+            mb: 4,
+          }}
+        >
+          {error}
+        </Typography>
+      )}
+
       <Grid container spacing={5}>
-        {pizzas.map((pizza, index) => (
-          <Grid item xs={12} sm={6} md={3.9} key={index}>
+        {orders.map((order) => (
+          <Grid item xs={12} sm={6} md={3.9} key={order.id}>
             <Card
               sx={{
                 p: 2,
@@ -93,10 +99,11 @@ const Orders = () => {
                   mb: 2,
                 }}
               >
-                <img
-                  src={pizza.image}
-                  alt={pizza.name}
-                  style={{
+                <Box
+                  component="img"
+                  src="/full_pizza.png" // Assuming all pizzas use the same image
+                  alt={order.pizza_name}
+                  sx={{
                     width: "87%",
                     height: "87%",
                     objectFit: "contain",
@@ -109,7 +116,7 @@ const Orders = () => {
                 variant="h6"
                 sx={{ textAlign: "start", width: "100%", fontWeight: "bold" }}
               >
-                {pizza.name}
+                {order.pizza_name}
               </Typography>
 
               {/* Pizza Ingredients */}
@@ -118,7 +125,7 @@ const Orders = () => {
                 color="textSecondary"
                 sx={{ mb: 2, textAlign: "start", width: "100%" }}
               >
-                {pizza.ingredients}
+                {order.toppings.join(", ")}
               </Typography>
 
               {/* Price and Order Button */}
@@ -140,7 +147,7 @@ const Orders = () => {
                     position: "relative",
                   }}
                 >
-                  {pizza.price}
+                  {order.price}
                   <Typography
                     variant="body2"
                     sx={{
@@ -154,18 +161,21 @@ const Orders = () => {
                     Birr
                   </Typography>
                 </Typography>
-                <Button
+                <Typography
                   variant="contained"
-                  color="warning"
                   sx={{
-                    textTransform: "none",
-                    px: 8,
-                    py: 1.5,
-                    fontSize: "1.3rem",
+                    fontSize: "1.5rem",
+                    fontWeight: "bold",
+                    color:
+                      order.order_status_user === "Ordered"
+                        ? "#f57c00"
+                        : "#008000",
                   }}
                 >
-                  Order
-                </Button>
+                  {order.order_status_user === "Ordered"
+                    ? "Ordered"
+                    : "Received"}
+                </Typography>
               </Box>
             </Card>
           </Grid>

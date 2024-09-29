@@ -71,8 +71,6 @@ const Sidebar = ({ isSidebarOpen }) => {
               button
               key={item.label}
               onClick={() => handleItemClick(item.action)}
-              component="a"
-              href="#"
               sx={{
                 color: "#000",
                 cursor: "pointer",

@@ -62,12 +62,13 @@ const DashboardNav = ({ toggleSidebar }) => {
           <Typography
             variant="h6"
             component="a"
-            href="#"
+            href="/"
             sx={{
               marginLeft: 2,
-              color: "#000",
+              color: "orange",
               fontWeight: "bold",
               textDecoration: "none",
+              fontFamily: "cursive",
             }}
           >
             2F Pizza

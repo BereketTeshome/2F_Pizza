@@ -1,4 +1,6 @@
+"use client";
 import { Box, Typography, Avatar, Button, Card, Divider } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 const pizzas = [
   {
@@ -44,7 +46,21 @@ const pizzas = [
     user: { name: "Alex Johnson", avatar: "/profile.png" },
   },
 ];
+
 const Fasting = () => {
+  const router = useRouter();
+  const handleOrderClick = (pizza) => {
+    // Create a URL with query parameters
+    const params = new URLSearchParams({
+      name: pizza.name,
+      ingredients: pizza.ingredients,
+      price: pizza.price,
+      image: pizza.image,
+    });
+
+    router.push(`/OrderDetail?${params.toString()}`);
+  };
+
   return (
     <Box
       sx={{
@@ -85,15 +101,15 @@ const Fasting = () => {
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "20px",
-              minWidth: "300px",
+              minWidth: "290px",
               flexShrink: 0,
             }}
           >
             {/* Circular Background with Pizza Image */}
             <Box
               sx={{
-                width: 300,
-                height: 300,
+                width: 250,
+                height: 250,
                 borderRadius: "50%",
                 background: "#fbe6cc",
                 display: "flex",
@@ -165,10 +181,11 @@ const Fasting = () => {
                 color="warning"
                 sx={{
                   textTransform: "none",
-                  px: 8,
-                  py: 1.5,
+                  px: 6,
+                  py: 1,
                   fontSize: "1.3rem",
                 }}
+                onClick={() => handleOrderClick(pizza)}
               >
                 Order
               </Button>
