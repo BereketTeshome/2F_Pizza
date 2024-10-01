@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { Box, Grid, Typography, Button, Card } from "@mui/material";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Remove the braces
+
 import NothingFound from "../components/NothingFound";
 
 const Orders = () => {
@@ -11,11 +12,21 @@ const Orders = () => {
   const [error, setError] = useState("");
   const cookie = new Cookies();
   const token = cookie.get("user_token");
-  const filteredToken = token ? token : sessionStorage?.getItem("user_token");
-  const decodedToken = filteredToken ? jwtDecode(filteredToken) : "";
+
+  const [filteredToken, setFilteredToken] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Check if we are in the browser
+      setFilteredToken(token || sessionStorage?.getItem("user_token"));
+    }
+  }, [token]);
 
   useEffect(() => {
     const fetchOrders = async () => {
+      if (!filteredToken) return;
+
+      const decodedToken = jwtDecode(filteredToken);
       const customerPhone = decodedToken?.phone;
 
       if (!customerPhone) {
@@ -36,7 +47,7 @@ const Orders = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [filteredToken]);
 
   if (orders.length < 1) {
     return <NothingFound />;

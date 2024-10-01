@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // To decode the token and extract restaurantname
+import { jwtDecode } from "jwt-decode"; // Remove the braces
 import {
   Box,
   Typography,
@@ -19,39 +19,48 @@ const OrdersManagement = () => {
   const [data, setData] = useState([]);
   const [openTopping, setOpenTopping] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [filteredToken, setFilteredToken] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Check if we are in the browser
+      const cookie = new Cookies();
+      const token =
+        cookie.get("user_token") || sessionStorage?.getItem("user_token");
+      setFilteredToken(token);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get token from cookies
-        const cookie = new Cookies();
-        const token =
-          cookie.get("user_token") || sessionStorage.getItem("user_token");
-        const decodedToken = token ? jwtDecode(token) : "";
-        const restaurantname = decodedToken.restaurantname;
+        if (filteredToken) {
+          const decodedToken = jwtDecode(filteredToken);
+          const restaurantname = decodedToken?.restaurantname;
 
-        if (restaurantname) {
-          // Fetch all orders
-          const response = await axios.get("http://localhost:6543/order");
+          if (restaurantname) {
+            // Fetch all orders
+            const response = await axios.get("http://localhost:6543/order");
 
-          // Filter orders by restaurantname
-          const filteredData = response.data.filter(
-            (order) => order.owner_name === restaurantname
-          );
+            // Filter orders by restaurantname
+            const filteredData = response.data.filter(
+              (order) => order.owner_name === restaurantname
+            );
 
-          const formattedData = filteredData.map((order) => ({
-            id: order.id,
-            pizzaName: order.pizza_name,
-            topping: order.toppings.join(", "),
-            quantity: order.quantity,
-            customerNo: order.customer_phone,
-            createdAt: order.created_at,
-            status: order.order_status.toLowerCase(), // Convert to lowercase for consistent status handling
-          }));
+            const formattedData = filteredData.map((order) => ({
+              id: order.id,
+              pizzaName: order.pizza_name,
+              topping: order.toppings.join(", "),
+              quantity: order.quantity,
+              customerNo: order.customer_phone,
+              createdAt: order.created_at,
+              status: order.order_status.toLowerCase(), // Convert to lowercase for consistent status handling
+            }));
 
-          setData(formattedData);
-        } else {
-          console.error("No token found!");
+            setData(formattedData);
+          } else {
+            console.error("No restaurant name found in token!");
+          }
         }
       } catch (error) {
         console.error("Error fetching order data:", error);
@@ -59,7 +68,7 @@ const OrdersManagement = () => {
     };
 
     fetchData();
-  }, []);
+  }, [filteredToken]);
 
   const handleOpenTopping = (order) => {
     setSelectedOrder(order);

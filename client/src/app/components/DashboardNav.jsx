@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -11,17 +11,32 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Cookies from "universal-cookie";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Remove the braces
 
 const DashboardNav = ({ toggleSidebar }) => {
   // State for the profile dropdown
   const [anchorEl, setAnchorEl] = useState(null);
+  const [filteredToken, setFilteredToken] = useState("");
+  const [email, setEmail] = useState("");
+  const [logo, setLogo] = useState("");
+
   const cookie = new Cookies();
   const token = cookie.get("user_token");
-  const filteredToken = token ? token : sessionStorage?.getItem("user_token");
-  const decodedToken = filteredToken ? jwtDecode(filteredToken) : "";
-  const email = decodedToken?.email;
-  const logo = decodedToken?.logo;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Check if we are in the browser
+      setFilteredToken(token || sessionStorage?.getItem("user_token"));
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (filteredToken) {
+      const decodedToken = jwtDecode(filteredToken);
+      setEmail(decodedToken?.email);
+      setLogo(decodedToken?.logo);
+    }
+  }, [filteredToken]);
 
   const toggleDropdown = (event) => {
     setAnchorEl(event.currentTarget);
@@ -30,6 +45,7 @@ const DashboardNav = ({ toggleSidebar }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <AppBar
       position="fixed"
