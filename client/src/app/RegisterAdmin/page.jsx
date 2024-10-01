@@ -6,14 +6,24 @@ import {
   Button,
   TextField,
   Checkbox,
-  Link,
+  IconButton,
 } from "@mui/material";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { z } from "zod";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 
 const schema = z
   .object({
+    adminname: z.string().min(1, "Admin Name is required"),
+    restaurantname: z.string().min(1, "Restaurant Name is required"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z
@@ -27,22 +37,23 @@ const schema = z
     path: ["confirmPassword"],
   });
 
-const SignUp = () => {
+const RegisterAdmin = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    adminName: "",
-    restaurantName: "",
-    logo: "",
+    adminname: "",
+    restaurantname: "",
     email: "",
     password: "",
     confirmPassword: "",
     location: "",
     phone: "",
-    isAdmin: "",
+    logo: null,
   });
   const [errors, setErrors] = useState({});
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
 
   const handleAccept = () => {
     setChecked(!checked);
@@ -53,14 +64,41 @@ const SignUp = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setIsUploading(true);
+      const uniqueName = `restaurant_owners/${uuidv4()}-${file.name}`;
+      try {
+        const storage = getStorage();
+        const storageRef = ref(storage, uniqueName);
+        await uploadBytesResumable(storageRef, file);
+        const downloadUrl = await getDownloadURL(storageRef);
+        setImageUrl(downloadUrl);
+        setFormData({ ...formData, logo: downloadUrl });
+      } catch (error) {
+        console.error("Error uploading image to Firebase:", error);
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
       schema.parse(formData);
-      await axios.post("http://localhost:6543/accounts/register", formData);
-      alert("User registered successfully!");
+
+      // Send form data including the image URL (logo)
+      await axios.post("http://localhost:6543/accounts/register", {
+        ...formData,
+        logo: imageUrl || "/user.png", // Default image URL in case none is provided
+        status: true,
+        isadmin: true,
+      });
+      alert("Admin registered successfully!");
       setIsLoading(false);
-      router.push("/Login");
+      router.push("/LoginAdmin");
     } catch (err) {
       if (err instanceof z.ZodError) {
         const formattedErrors = {};
@@ -77,7 +115,7 @@ const SignUp = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", display: "flex" }}>
+    <Box sx={{ width: "100%", display: "flex", height: "fit-content" }}>
       <Box
         sx={{
           background: "#ff9921",
@@ -85,7 +123,6 @@ const SignUp = () => {
           display: { xs: "none", md: "flex" },
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
         }}
       >
         <Box
@@ -100,11 +137,10 @@ const SignUp = () => {
       </Box>
       <Box
         sx={{
-          paddingX: "3%",
+          padding: "3%",
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
-          height: "100vh",
           width: { xs: "100%", md: "50%" },
         }}
       >
@@ -134,10 +170,23 @@ const SignUp = () => {
             }}
           >
             2F-Pizza
-          </Typography>
+          </Typography>{" "}
+          <br />
         </Typography>
-
+        <Typography variant="h6" sx={{ paddingY: 1 }}>
+          SignUp As Admin
+        </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <TextField
+            label="Admin Name"
+            variant="outlined"
+            type="text"
+            name="adminname"
+            value={formData.adminname}
+            onChange={handleChange}
+            error={!!errors.adminname}
+            helperText={errors.adminname}
+          />
           <TextField
             label="Email address"
             variant="outlined"
@@ -169,16 +218,6 @@ const SignUp = () => {
             helperText={errors.confirmPassword}
           />
           <TextField
-            label="Location"
-            variant="outlined"
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            error={!!errors.location}
-            helperText={errors.location}
-          />
-          <TextField
             label="Phone Number"
             variant="outlined"
             type="number"
@@ -188,6 +227,61 @@ const SignUp = () => {
             error={!!errors.phone}
             helperText={errors.phone}
           />
+          <TextField
+            label="Restaurant Name"
+            variant="outlined"
+            type="text"
+            name="restaurantname"
+            value={formData.restaurantname}
+            onChange={handleChange}
+            error={!!errors.restaurantname}
+            helperText={errors.restaurantname}
+          />
+          <TextField
+            label="Location"
+            variant="outlined"
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            error={!!errors.location}
+            helperText={errors.location}
+          />
+
+          {/* File Upload with Icon */}
+          <Box
+            sx={{
+              border: "2px dashed #ccc",
+              borderRadius: "8px",
+              p: 2,
+              textAlign: "center",
+              cursor: "pointer",
+              mb: 3,
+            }}
+            onClick={() => document.getElementById("upload-photo").click()}
+          >
+            <input
+              accept="image/*"
+              type="file"
+              id="upload-photo"
+              style={{ display: "none" }}
+              onChange={handleImageChange}
+            />
+            <label htmlFor="upload-photo">
+              <IconButton
+                component="span"
+                sx={{
+                  color: "#ff8100",
+                  "&:hover": { bgcolor: "transparent" },
+                }}
+              >
+                <UploadFileIcon fontSize="large" />
+              </IconButton>
+              <Typography variant="body2">
+                {formData.logo ? "Image uploaded" : "Upload restaurant logo"}
+              </Typography>
+            </label>
+          </Box>
         </Box>
 
         <Typography>
@@ -206,26 +300,11 @@ const SignUp = () => {
           disabled={!checked}
           onClick={isLoading === false && handleSubmit}
         >
-          {isLoading ? "signing up..." : "Sign Up"}
+          {isLoading ? "Signing up..." : "Register as Admin"}
         </Button>
-        <Typography sx={{ textAlign: "center", marginTop: 2 }}>
-          Already have an account?{" "}
-          <Link href="/Login" sx={{ textDecoration: "none", color: "#ff9921" }}>
-            Login
-          </Link>
-        </Typography>
-        <Typography sx={{ textAlign: "center", marginTop: 2 }}>
-          Want to register as an Admin?{" "}
-          <Link
-            href="/RegisterAdmin"
-            sx={{ textDecoration: "none", color: "#ff9921" }}
-          >
-            Register as Admin
-          </Link>
-        </Typography>
       </Box>
     </Box>
   );
 };
 
-export default SignUp;
+export default RegisterAdmin;

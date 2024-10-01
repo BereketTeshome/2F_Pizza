@@ -24,11 +24,12 @@ const createOrder = async (req, res) => {
     order_status,
     order_status_user,
     price,
+    owner_name,
   } = req.body;
 
   try {
     const result = await pool.query(
-      "INSERT INTO orders (pizza_name, toppings, quantity, customer_phone, order_status, order_status_user, price) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO orders (pizza_name, toppings, quantity, customer_phone, order_status, order_status_user, price, owner_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
         pizza_name,
         toppings,
@@ -37,6 +38,7 @@ const createOrder = async (req, res) => {
         order_status,
         order_status_user,
         price,
+        owner_name,
       ]
     );
     const newOrder = result.rows[0];

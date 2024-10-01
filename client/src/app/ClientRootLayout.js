@@ -19,6 +19,8 @@ export default function ClientRootLayout({ children }) {
   const hideNavbarFooter =
     pathname === "/Register" ||
     pathname === "/Login" ||
+    pathname === "/RegisterAdmin" ||
+    pathname === "/LoginAdmin" ||
     pathname === "/Dashboard";
 
   return (

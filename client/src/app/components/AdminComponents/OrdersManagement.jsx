@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode"; // To decode the token and extract restaurantname
 import {
   Box,
   Typography,
@@ -12,6 +13,7 @@ import { MaterialReactTable } from "material-react-table";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckIcon from "@mui/icons-material/Check";
 import OrderDetailsModal from "./OrderDetailsModal";
+import Cookies from "universal-cookie";
 
 const OrdersManagement = () => {
   const [data, setData] = useState([]);
@@ -21,21 +23,41 @@ const OrdersManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:6543/order");
-        const formattedData = response.data.map((order) => ({
-          id: order.id,
-          pizzaName: order.pizza_name,
-          topping: order.toppings.join(", "),
-          quantity: order.quantity,
-          customerNo: order.customer_phone,
-          createdAt: order.created_at,
-          status: order.order_status.toLowerCase(), // Convert to lowercase for consistent status handling
-        }));
-        setData(formattedData);
+        // Get token from cookies
+        const cookie = new Cookies();
+        const token =
+          cookie.get("user_token") || sessionStorage.getItem("user_token");
+        const decodedToken = token ? jwtDecode(token) : "";
+        const restaurantname = decodedToken.restaurantname;
+
+        if (restaurantname) {
+          // Fetch all orders
+          const response = await axios.get("http://localhost:6543/order");
+
+          // Filter orders by restaurantname
+          const filteredData = response.data.filter(
+            (order) => order.owner_name === restaurantname
+          );
+
+          const formattedData = filteredData.map((order) => ({
+            id: order.id,
+            pizzaName: order.pizza_name,
+            topping: order.toppings.join(", "),
+            quantity: order.quantity,
+            customerNo: order.customer_phone,
+            createdAt: order.created_at,
+            status: order.order_status.toLowerCase(), // Convert to lowercase for consistent status handling
+          }));
+
+          setData(formattedData);
+        } else {
+          console.error("No token found!");
+        }
       } catch (error) {
         console.error("Error fetching order data:", error);
       }
     };
+
     fetchData();
   }, []);
 

@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const pizzasRouter = require("./routes/pizzas");
 const orderRouter = require("./routes/orders");
+const roleRouter = require("./routes/roles");
 const usersRouter = require("./routes/users");
 
 const app = express();
@@ -25,6 +26,7 @@ testConnection();
 
 app.use("/pizzas", pizzasRouter);
 app.use("/order", orderRouter);
+app.use("/role", roleRouter);
 app.use("/accounts", usersRouter);
 
 const port = process.env.PORT;

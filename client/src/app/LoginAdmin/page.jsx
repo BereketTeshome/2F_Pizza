@@ -7,9 +7,9 @@ import {
   TextField,
   Checkbox,
   Link,
-  Divider,
   CircularProgress,
 } from "@mui/material";
+import Divider from "@mui/material/Divider";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import axios from "axios";
@@ -20,7 +20,7 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-const LogIn = () => {
+const LogInAdmin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -43,12 +43,14 @@ const LogIn = () => {
         "http://localhost:6543/accounts/login",
         { email, password }
       );
+      setIsLoading(false);
+
       const data = response.data;
       rememberMe
         ? cookie.set("user_token", data.token)
         : sessionStorage.setItem("user_token", data.token);
 
-      router.push("/").then(() => setIsLoading(false)); // Stop loading when routed
+      router.push("/Dashboard");
     } catch (error) {
       setIsLoading(false);
       if (
@@ -122,7 +124,7 @@ const LogIn = () => {
           </Typography>
         </Typography>
         <Typography variant="h6" sx={{ paddingY: 1 }}>
-          Login
+          Login As Admin
         </Typography>
         <Divider sx={{ marginBottom: 3 }} />
 
@@ -176,14 +178,13 @@ const LogIn = () => {
               bgcolor: `${isLoading ? "lightgray" : "#446497"}`,
             },
           }}
-          onClick={!isLoading ? handleLogin : null}
+          onClick={isLoading === false && handleLogin}
           startIcon={
             isLoading && <CircularProgress color="inherit" size={20} />
           }
         >
           {isLoading ? "Logging..." : "Login"}
         </Button>
-
         <Typography sx={{ textAlign: "center", marginTop: 2 }}>
           Don&apos;t have an account?{" "}
           <Link
@@ -197,18 +198,9 @@ const LogIn = () => {
             Sign up
           </Link>
         </Typography>
-        <Typography sx={{ textAlign: "center", marginTop: 2 }}>
-          Want to login as an Admin?{" "}
-          <Link
-            href="/LoginAdmin"
-            sx={{ textDecoration: "none", color: "#ff9921" }}
-          >
-            Login as Admin
-          </Link>
-        </Typography>
       </Box>
     </Box>
   );
 };
 
-export default LogIn;
+export default LogInAdmin;

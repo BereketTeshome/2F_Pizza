@@ -4,6 +4,9 @@ const pool = require("../db");
 const getAllPizzas = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM pizza");
+    if (result.rows.length < 0) {
+      return res.status(404).json({ msg: "No pizza found" });
+    }
     res.status(200).json(result.rows);
   } catch (error) {
     console.error(error);
@@ -13,12 +16,26 @@ const getAllPizzas = async (req, res) => {
 
 // Create a new pizza
 const createPizza = async (req, res) => {
-  const { pizza_name, toppings, quantity, price, image } = req.body;
+  const {
+    pizza_name,
+    owner_name,
+    owner_image,
+    toppings,
+    quantity,
+    price,
+    image,
+  } = req.body;
+
   try {
     const result = await pool.query(
-      "INSERT INTO pizza (pizza_name, toppings, quantity, price, image) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [pizza_name, toppings, quantity, price, image]
+      `INSERT INTO pizza 
+        (pizza_name, owner_name, owner_image, toppings, quantity, price, image) 
+       VALUES 
+        ($1, $2, $3, $4, $5, $6, $7) 
+       RETURNING *`,
+      [pizza_name, owner_name, owner_image, toppings, quantity, price, image]
     );
+
     const newPizza = result.rows[0];
     res.status(201).json(newPizza);
   } catch (error) {

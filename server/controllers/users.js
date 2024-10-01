@@ -6,6 +6,9 @@ const getUsers = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM users");
     const users = result.rows;
+    if (users.length < 1) {
+      return res.status(404).json({ error: "No use found!" });
+    }
 
     res.status(200).json(users);
   } catch (err) {
@@ -22,10 +25,10 @@ const register = async (req, res) => {
     email,
     password,
     phone,
-    isAdmin,
+    isadmin,
     status,
-    adminName = "",
-    restaurantName = "",
+    adminname = "",
+    restaurantname = "",
     logo,
   } = req.body;
 
@@ -43,19 +46,19 @@ const register = async (req, res) => {
     // Insert the new user with all necessary fields
     const newUser = await pool.query(
       `INSERT INTO users 
-      (adminName, restaurantName, logo, location, email, password, phone, isAdmin, status) 
+      (adminname, restaurantname, logo, location, email, password, phone, isadmin, status) 
       VALUES 
       ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
       RETURNING *`,
       [
-        adminName,
-        restaurantName,
+        adminname,
+        restaurantname,
         logo,
         location,
         email,
         hashedPassword,
         phone,
-        isAdmin || false,
+        isadmin || false,
         status || false,
       ]
     );
@@ -84,13 +87,14 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user.id,
-        adminName: user.adminname,
-        restaurantName: user.restaurantname,
+        adminname: user.adminname,
+        restaurantname: user.restaurantname,
+        logo: user.logo,
         email: user.email,
         location: user.location,
         phone: user.phone,
         status: user.status,
-        isAdmin: user.isadmin,
+        isadmin: user.isadmin,
       },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }

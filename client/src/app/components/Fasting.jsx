@@ -4,46 +4,70 @@ import { useRouter } from "next/navigation";
 
 const pizzas = [
   {
-    name: "Margherita",
-    ingredients: "Tomato, Mozzarella, Basil",
-    price: "100",
-    image: "/full_pizza.png",
-    user: { name: "John Doe", avatar: "/profile.png" },
+    id: 1,
+    pizza_name: "Fasting Margherita",
+    owner_name: "Healthy Eats",
+    owner_image: "profile5.png",
+    toppings: ["Tomato Sauce", "Fresh Mozzarella", "Basil"],
+    quantity: 1,
+    created_at: "2024-10-01T00:30:23.018Z",
+    price: 100,
+    image: "/Fasting Margherita.png",
   },
   {
-    name: "Pepperoni",
-    ingredients: "Pepperoni, Mozzarella, Tomato",
-    price: "120",
-    image: "/full_pizza.png",
-    user: { name: "Jane Smith", avatar: "/profile.png" },
+    id: 2,
+    pizza_name: "Fasting Veggie Supreme",
+    owner_name: "Green Kitchen",
+    owner_image: "profile4.png",
+    toppings: ["Spinach", "Bell Peppers", "Mushrooms", "Olives"],
+    quantity: 1,
+    created_at: "2024-10-01T00:30:23.018Z",
+    price: 120,
+    image: "/Fasting Veggie Supreme.png",
   },
   {
-    name: "BBQ Chicken",
-    ingredients: "Chicken, BBQ Sauce, Onions",
-    price: "140",
-    image: "/full_pizza.png",
-    user: { name: "Alex Johnson", avatar: "/profile.png" },
+    id: 3,
+    pizza_name: "Fasting Spinach & Feta",
+    owner_name: "Mediterranean Bites",
+    owner_image: "profile3.png",
+    toppings: ["Spinach", "Feta Cheese", "Garlic"],
+    quantity: 1,
+    created_at: "2024-10-01T00:30:23.018Z",
+    price: 110,
+    image: "/Fasting Spinach & Feta.png",
   },
   {
-    name: "Margherita",
-    ingredients: "Tomato, Mozzarella, Basil",
-    price: "100",
-    image: "/full_pizza.png",
-    user: { name: "John Doe", avatar: "/profile.png" },
+    id: 4,
+    pizza_name: "Fasting Pesto Veggie",
+    owner_name: "Healthy Cravings",
+    owner_image: "profile2.png",
+    toppings: ["Pesto Sauce", "Zucchini", "Cherry Tomatoes"],
+    quantity: 1,
+    created_at: "2024-10-01T00:30:23.018Z",
+    price: 140,
+    image: "/Fasting Pesto Veggie.png",
   },
   {
-    name: "Pepperoni",
-    ingredients: "Pepperoni, Mozzarella, Tomato",
-    price: "120",
-    image: "/full_pizza.png",
-    user: { name: "Jane Smith", avatar: "/profile.png" },
+    id: 5,
+    pizza_name: "Fasting Caprese Delight",
+    owner_name: "Fresh Flavors",
+    owner_image: "profile1.png",
+    toppings: ["Tomato Slices", "Fresh Mozzarella", "Basil Pesto"],
+    quantity: 1,
+    created_at: "2024-10-01T00:30:23.018Z",
+    price: 115,
+    image: "/Fasting Caprese Delight.png",
   },
   {
-    name: "BBQ Chicken",
-    ingredients: "Chicken, BBQ Sauce, Onions",
-    price: "140",
-    image: "/full_pizza.png",
-    user: { name: "Alex Johnson", avatar: "/profile.png" },
+    id: 6,
+    pizza_name: "Fasting BBQ Veggie",
+    owner_name: "Grill & Chill",
+    owner_image: "profile.png",
+    toppings: ["BBQ Sauce", "Corn", "Red Onion", "Bell Peppers"],
+    quantity: 1,
+    created_at: "2024-10-01T00:30:23.018Z",
+    price: 125,
+    image: "/Fasting BBQ Veggie.png",
   },
 ];
 
@@ -111,6 +135,7 @@ const Fasting = () => {
                 width: 250,
                 height: 250,
                 borderRadius: "50%",
+                overflow: "hidden", // Ensure the content is clipped to the rounded container
                 background: "#fbe6cc",
                 display: "flex",
                 justifyContent: "center",
@@ -122,9 +147,10 @@ const Fasting = () => {
                 src={pizza.image}
                 alt={pizza.name}
                 style={{
-                  width: "87%",
-                  height: "87%",
-                  objectFit: "contain",
+                  width: "90%",
+                  height: "90%",
+                  borderRadius: "50%", // Crop the image itself into a circle
+                  objectFit: "cover",
                 }}
               />
             </Box>
@@ -203,11 +229,11 @@ const Fasting = () => {
               }}
             >
               <Avatar
-                src={pizza.user.avatar}
-                alt={pizza.user.name}
+                src={pizza.owner_image}
+                alt={pizza.owner_name}
                 sx={{ width: 40, height: 40, mr: "auto" }}
               />
-              <Typography variant="body2">{pizza.user.name}</Typography>
+              <Typography variant="body2">{pizza.owner_name}</Typography>
             </Box>
           </Card>
         ))}

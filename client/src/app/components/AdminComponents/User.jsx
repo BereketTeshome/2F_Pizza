@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -11,51 +11,62 @@ import { MaterialReactTable } from "material-react-table";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import AddUserModal from "./AddUserModal"; // Import the new modal component
+import axios from "axios";
 
 const User = () => {
-  const [data, setData] = useState([
-    {
-      name: "John Doe",
-      phoneNo: "555-1234",
-      email: "john@example.com",
-      location: "New York",
-      role: "Admin",
-      active: true,
-    },
-    {
-      name: "Jane Smith",
-      phoneNo: "555-5678",
-      email: "jane@example.com",
-      location: "California",
-      role: "Earner",
-      active: false,
-    },
-  ]);
-
+  const [data, setData] = useState([]);
   const [openAddUser, setOpenAddUser] = useState(false);
+
+  // Fetch user data from the server
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:6543/accounts/users"
+        );
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Handle open/close for adding a new user modal
   const handleOpenAddUser = () => setOpenAddUser(true);
   const handleCloseAddUser = () => setOpenAddUser(false);
 
   // Handle adding a new user
-  const handleAddUser = (newUser) => {
-    const newUserData = { ...newUser, active: true };
-    setData([...data, newUserData]);
-    setOpenAddUser(false);
+  const handleAddUser = async (newUser) => {
+    try {
+      await axios.post("http://localhost:6543/accounts/register", newUser);
+      setData((prevData) => [...prevData, newUser]);
+      setOpenAddUser(false);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
   };
 
   // Handle toggle active status
   const handleToggleActive = (index) => {
     const updatedData = [...data];
-    updatedData[index].active = !updatedData[index].active;
+    updatedData[index].status = !updatedData[index].status;
     setData(updatedData);
   };
 
   // Handle deleting a user
-  const handleDeleteUser = (index) => {
-    const updatedData = data.filter((_, i) => i !== index);
-    setData(updatedData);
+  // Handle deleting a user
+  const handleDeleteUser = async (userId) => {
+    try {
+      // Use userId directly in the delete URL
+      await axios.delete(`http://localhost:6543/accounts/users/${userId}`);
+
+      // Remove the deleted user from the UI
+      const updatedData = data.filter((user) => user.id !== userId);
+      setData(updatedData);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
 
   // Columns for the table
@@ -67,33 +78,28 @@ const User = () => {
         size: 20,
         Cell: ({ row }) => row.index + 1,
       },
+      // {
+      //   accessorKey: "adminname",
+      //   header: "Name",
+      //   size: 150,
+      // },
       {
-        accessorKey: "name",
-        header: "Name",
-        size: 150,
-      },
-      {
-        accessorKey: "phoneNo",
+        accessorKey: "phone",
         header: "Phone No.",
         size: 150,
       },
       {
         accessorKey: "email",
         header: "Email",
-        size: 200,
-      },
-      {
-        accessorKey: "role",
-        header: "Role",
-        size: 150,
+        size: 250,
       },
       {
         accessorKey: "actions",
         header: "Actions",
         size: 250,
         Cell: ({ row }) => {
-          const index = row.index;
-          const isActive = data[index].active;
+          const userId = row.original.id; // Use the user's id here
+          const isActive = data.find((user) => user.id === userId)?.status;
           return (
             <Box
               sx={{
@@ -116,7 +122,7 @@ const User = () => {
                 control={
                   <Switch
                     checked={isActive}
-                    onChange={() => handleToggleActive(index)}
+                    onChange={() => handleToggleActive(row.index)}
                     sx={{
                       width: "60px",
                       "& .MuiSwitch-switchBase.Mui-checked": {
@@ -137,7 +143,7 @@ const User = () => {
               />
 
               {/* Delete user */}
-              <IconButton onClick={() => handleDeleteUser(index)}>
+              <IconButton onClick={() => handleDeleteUser(userId)}>
                 <DeleteIcon sx={{ color: "red" }} />
               </IconButton>
             </Box>

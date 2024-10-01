@@ -92,6 +92,7 @@ const OrderPage = () => {
     toppings: "",
     price: "",
     image: "",
+    owner_name: "",
   });
 
   const [quantity, setQuantity] = useState(1);
@@ -104,10 +105,11 @@ const OrderPage = () => {
     const toppings = searchParams.get("ingredients");
     const price = searchParams.get("price");
     const image = searchParams.get("image");
+    const owner_name = searchParams.get("owner_name");
 
-    if (pizza_name && toppings && price && image) {
+    if (pizza_name && toppings && price && image && owner_name) {
       // Set pizza data from the query
-      setPizzaData({ pizza_name, toppings, price, image });
+      setPizzaData({ pizza_name, toppings, price, image, owner_name });
       setMainImage(image); // Set the initial main image
 
       // Split toppings into an array and set as selected toppings
@@ -150,6 +152,7 @@ const OrderPage = () => {
       ],
       quantity,
       customer_phone: phone,
+      owner_name: pizzaData.owner_name,
       order_status: "Preparing",
       order_status_user: "Ordered",
       price: totalPrice || 340,
@@ -159,6 +162,7 @@ const OrderPage = () => {
     };
 
     try {
+      console.log(orderData);
       await axios.post("http://localhost:6543/order", orderData);
       setModalOpen(true); // Open the success modal
     } catch (error) {

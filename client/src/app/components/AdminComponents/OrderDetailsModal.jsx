@@ -2,18 +2,16 @@ import React from "react";
 import { Box, Typography, Modal, Chip, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const OrderDetailsModal = ({ open, onClose, order }) => {
-  const getToppingColor = (topping) => {
-    // Define colors for different toppings
-    const colors = {
-      Cheese: "#008077",
-      Pepperoni: "#ff5252",
-      Pineapple: "#01c550",
-      Ham: "#8d6e63",
-    };
-    return colors[topping] || "#e0e0e0";
-  };
+// Function to generate consistent colors based on topping names
+const getToppingColor = (topping) => {
+  const hash = topping
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const hue = hash % 360;
+  return `hsl(${hue}, 70%, 60%)`;
+};
 
+const OrderDetailsModal = ({ open, onClose, order }) => {
   return (
     <Modal open={open} onClose={onClose}>
       <Box

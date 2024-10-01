@@ -37,8 +37,8 @@ const Hero = () => {
       <Box
         component="img"
         sx={{
-          height: 500,
-          width: 260,
+          height: "70%",
+          width: "30%",
           position: "relative",
           right: 0,
           top: "1rem",

@@ -85,9 +85,11 @@ export default function CarouselComponent() {
                   {slide.description}
                 </Typography>
                 <Button
+                  component="a"
                   variant="contained"
                   color="warning"
                   sx={{ fontWeight: "bold" }}
+                  href="#popularPizzas"
                 >
                   Order Now
                 </Button>

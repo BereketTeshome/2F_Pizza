@@ -15,6 +15,8 @@ import axios from "axios";
 import { storage } from "../../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode"; // For decoding the token
 
 const AddMenu = () => {
   const [pizzaName, setPizzaName] = useState("");
@@ -30,10 +32,18 @@ const AddMenu = () => {
 
   // Handle adding a new topping to the list
   const handleAddTopping = () => {
-    if (newTopping.trim() !== "") {
-      setToppings([...toppings, { name: newTopping, checked: false }]);
-      setNewTopping("");
+    if (newTopping.trim() === "") {
+      alert("Topping cannot be empty.");
+      return;
     }
+
+    if (toppings.some((topping) => topping.name === newTopping.trim())) {
+      alert("This topping already exists.");
+      return;
+    }
+
+    setToppings([...toppings, { name: newTopping, checked: false }]);
+    setNewTopping("");
   };
 
   // Handle toggling topping selection
@@ -64,6 +74,7 @@ const AddMenu = () => {
 
   // Handle form submit
   const handleSubmit = async () => {
+    // Default image URL if no image is uploaded
     let imageUrl =
       "https://againstthegraingourmet.com/cdn/shop/products/Pepperoni_Pizza_Beauty_900x.jpg?v=1658703726";
 
@@ -71,28 +82,43 @@ const AddMenu = () => {
       imageUrl = pizzaPhoto.url;
     }
 
+    // Get the token from Cookies or sessionStorage
+    const cookies = new Cookies();
+    const token = cookies.get("user_token");
+    const filteredToken = token ? token : sessionStorage?.getItem("user_token");
+
+    // Decode the token to extract the owner's name and image
+    const decodedToken = filteredToken ? jwtDecode(filteredToken) : null;
+    const ownerName = decodedToken?.restaurantname || "Unknown Restaurant";
+    const ownerImage = decodedToken?.logo || "/profile.png";
+
+    // Get selected toppings
     const selectedToppings = toppings
       .filter((topping) => topping.checked)
       .map((topping) => topping.name);
 
+    // Prepare pizza data for submission
     const pizzaData = {
       pizza_name: pizzaName,
-      toppings: selectedToppings,
+      owner_name: ownerName, // Add the owner name
+      owner_image: ownerImage, // Add owner image
+      toppings: selectedToppings, // This will be an array
       quantity: 1, // Quantity set to 1 by default
       price: Number(price),
       image: imageUrl,
     };
 
     try {
+      // POST request to the server
       const response = await axios.post(
         "http://localhost:6543/pizzas",
         pizzaData
       );
+
       console.log("Response from server:", response);
 
-      // Only open the success modal if a successful response (status code 200-299) is received
       if (response.status >= 200 && response.status < 300) {
-        setModalOpen(true); // Open the success modal
+        setModalOpen(true); // Open the success modal on successful submission
       } else {
         throw new Error("Unexpected response status");
       }
@@ -242,9 +268,9 @@ const AddMenu = () => {
               "&:hover": { bgcolor: "#ff8100" },
             }}
             onClick={handleSubmit}
-            disabled={isUploading} // Disable button during image upload
+            disabled={isUploading}
           >
-            SUBMIT
+            {isUploading ? "Uploading..." : "SUBMIT"}
           </Button>
         </Box>
 

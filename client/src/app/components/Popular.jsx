@@ -9,66 +9,39 @@ import {
   Divider,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Popular = () => {
   const router = useRouter();
+  const [pizzas, setPizzas] = useState([]);
 
-  const pizzas = [
-    {
-      name: "Margherita",
-      ingredients: "Tomato, Mozzarella, Basil",
-      price: "100",
-      image: "/full_pizza.png",
-      user: { name: "John Doe", avatar: "/profile.png" },
-    },
-    {
-      name: "Pepperoni",
-      ingredients: "Pepperoni, Mozzarella, Tomato",
-      price: "120",
-      image: "/full_pizza.png",
-      user: { name: "Jane Smith", avatar: "/profile.png" },
-    },
-    {
-      name: "BBQ Chicken",
-      ingredients: "Chicken, BBQ Sauce, Onions",
-      price: "140",
-      image: "/full_pizza.png",
-      user: { name: "Alex Johnson", avatar: "/profile.png" },
-    },
-    {
-      name: "Margherita",
-      ingredients: "Tomato, Mozzarella, Basil",
-      price: "100",
-      image: "/full_pizza.png",
-      user: { name: "John Doe", avatar: "/profile.png" },
-    },
-    {
-      name: "Pepperoni",
-      ingredients: "Pepperoni, Mozzarella, Tomato",
-      price: "120",
-      image: "/full_pizza.png",
-      user: { name: "Jane Smith", avatar: "/profile.png" },
-    },
-    {
-      name: "BBQ Chicken",
-      ingredients: "Chicken, BBQ Sauce, Onions",
-      price: "140",
-      image: "/full_pizza.png",
-      user: { name: "Alex Johnson", avatar: "/profile.png" },
-    },
-  ];
+  useEffect(() => {
+    // Fetch data from the API
+    axios
+      .get("http://localhost:6543/pizzas")
+      .then((response) => {
+        // Limit the data to 6 pizzas only
+        setPizzas(response.data.slice(0, 6));
+      })
+      .catch((error) => {
+        console.error("Error fetching pizzas:", error);
+      });
+  }, []);
 
   const handleOrderClick = (pizza) => {
     // Create a URL with query parameters
     const params = new URLSearchParams({
-      name: pizza.name,
-      ingredients: pizza.ingredients,
+      name: pizza.pizza_name,
+      ingredients: pizza.toppings.join(", "),
       price: pizza.price,
       image: pizza.image,
+      owner_name: pizza.owner_name,
     });
 
     router.push(`/OrderDetail?${params.toString()}`);
   };
+
   return (
     <Box
       sx={{
@@ -77,6 +50,7 @@ const Popular = () => {
       }}
     >
       <Typography
+        id="popularPizzas"
         sx={{
           fontSize: "1.8rem",
           color: "#999",
@@ -106,6 +80,7 @@ const Popular = () => {
                   width: 300,
                   height: 300,
                   borderRadius: "50%",
+                  overflow: "hidden", // Ensure the content is clipped to the rounded container
                   background: "#fbe6cc",
                   display: "flex",
                   justifyContent: "center",
@@ -115,8 +90,13 @@ const Popular = () => {
               >
                 <img
                   src={pizza.image}
-                  alt={pizza.name}
-                  style={{ width: "87%", height: "87%", objectFit: "contain" }}
+                  alt={pizza.pizza_name}
+                  style={{
+                    width: "80%",
+                    height: "80%",
+                    borderRadius: "50%", // Make the image itself circular
+                    objectFit: "cover",
+                  }}
                 />
               </Box>
 
@@ -124,7 +104,7 @@ const Popular = () => {
                 variant="h6"
                 sx={{ textAlign: "start", width: "100%" }}
               >
-                {pizza.name}
+                {pizza.pizza_name}
               </Typography>
 
               <Typography
@@ -132,7 +112,7 @@ const Popular = () => {
                 color="textSecondary"
                 sx={{ mb: 2, textAlign: "start", width: "100%" }}
               >
-                {pizza.ingredients}
+                {pizza.toppings.join(", ")}
               </Typography>
 
               <Box
@@ -193,11 +173,11 @@ const Popular = () => {
                 }}
               >
                 <Avatar
-                  src={pizza.user.avatar}
-                  alt={pizza.user.name}
+                  src={pizza.owner_image}
+                  alt={pizza.owner_name}
                   sx={{ width: 40, height: 40, mr: "auto" }}
                 />
-                <Typography variant="body2">{pizza.user.name}</Typography>
+                <Typography variant="body2">{pizza.owner_name}</Typography>
               </Box>
             </Card>
           </Grid>

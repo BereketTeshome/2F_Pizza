@@ -9,11 +9,10 @@ const Dashboard = () => {
   const component = useSelector((state) => state.component.component);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Toggle sidebar function
+  // Toggle sidebar function using functional update
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen((prevState) => !prevState);
   };
-
   return (
     <div>
       {/* Pass toggleSidebar to DashboardNav */}

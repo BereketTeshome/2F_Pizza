@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -12,58 +13,128 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RoleModal from "./RoleModal";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const Role = () => {
-  const [data, setData] = useState([
-    { roleName: "Kitchen Manager", createdAt: "2024-09-20", active: true },
-    { roleName: "Cashier", createdAt: "2024-09-21", active: false },
-    { roleName: "Branch Manager", createdAt: "2024-09-22", active: true },
-  ]);
-
+  const [data, setData] = useState([]);
   const [openRoleModal, setOpenRoleModal] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
   const [selectedRoleIndex, setSelectedRoleIndex] = useState(null);
+  const [permissions, setPermissions] = useState({
+    updateOrderStatus: false,
+    seeCustomers: false,
+    seeOrders: false,
+    addUsers: false,
+    createRoles: false,
+  });
+
+  // Fetch roles when the component mounts
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        // Get token from local storage
+        const cookie = new Cookies();
+        const token =
+          cookie.get("user_token") || sessionStorage.getItem("user_token");
+        const decodedToken = token ? jwtDecode(token) : "";
+        const restaurantname = decodedToken.restaurantname;
+
+        if (restaurantname) {
+          // Fetch all roles from the server
+          const response = await axios.get("http://localhost:6543/role");
+
+          // Filter roles by owner_name matching the restaurantname
+          const filteredData = response.data.filter(
+            (role) => role.owner_name === restaurantname
+          );
+
+          setData(filteredData);
+        } else {
+          console.error("No token found!");
+        }
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      }
+    };
+    fetchRoles();
+  }, []);
 
   // Handle open/close modal
   const handleOpenRoleModal = (index) => {
-    setSelectedRoleIndex(index);
-    setNewRoleName(data[index]?.roleName || "");
+    if (index !== null) {
+      const selectedRole = data[index];
+      setSelectedRoleIndex(index);
+      setNewRoleName(selectedRole.role_name || "");
+
+      // Set permissions from the selected role's data
+      const initialPermissions = {
+        updateOrderStatus: selectedRole.permissions.includes(
+          "Update order status"
+        ),
+        seeCustomers: selectedRole.permissions.includes("See customers"),
+        seeOrders: selectedRole.permissions.includes("See orders"),
+        addUsers: selectedRole.permissions.includes("Add users"),
+        createRoles: selectedRole.permissions.includes("Create roles"),
+      };
+
+      setPermissions(initialPermissions);
+    } else {
+      // Reset for adding new role
+      setNewRoleName("");
+      setPermissions({
+        updateOrderStatus: false,
+        seeCustomers: false,
+        seeOrders: false,
+        addUsers: false,
+        createRoles: false,
+      });
+    }
     setOpenRoleModal(true);
   };
 
   const handleCloseRoleModal = () => setOpenRoleModal(false);
 
   // Handle saving role changes
-  const handleSaveRole = (permissions) => {
-    const updatedData = [...data];
-    if (selectedRoleIndex !== null) {
-      updatedData[selectedRoleIndex] = {
-        ...updatedData[selectedRoleIndex],
-        roleName: newRoleName,
-        permissions,
-      };
-    } else {
-      updatedData.push({
-        roleName: newRoleName,
-        createdAt: new Date().toLocaleDateString(),
-        active: true,
-        permissions,
-      });
+  const handleSaveRole = async (permissions) => {
+    const newRole = {
+      role_name: newRoleName,
+      status: true, // Defaulting to true
+      permissions: Object.keys(permissions).filter((key) => permissions[key]),
+    };
+
+    try {
+      await axios.post("http://localhost:6543/role", newRole);
+      // Fetch updated roles list
+      const response = await axios.get("http://localhost:6543/role");
+      setData(response.data);
+    } catch (error) {
+      console.error("Error saving role:", error);
     }
-    setData(updatedData);
+
     handleCloseRoleModal();
   };
 
-  // Handle deleting a role
-  const handleDeleteRole = (index) => {
-    const updatedData = data.filter((_, i) => i !== index);
-    setData(updatedData);
+  // Handle deleting a role based on its ID
+  const handleDeleteRole = async (roleId) => {
+    try {
+      await axios.delete(`http://localhost:6543/role/${roleId}`);
+      // Remove the deleted role from the UI
+      const updatedData = data.filter((role) => role.id !== roleId);
+      setData(updatedData);
+    } catch (error) {
+      console.error("Error deleting role:", error);
+    }
   };
 
   // Handle toggle active status
-  const handleToggleActive = (index) => {
-    const updatedData = [...data];
-    updatedData[index].active = !updatedData[index].active;
+  const handleToggleActive = (roleId) => {
+    const updatedData = data.map((role) => {
+      if (role.id === roleId) {
+        return { ...role, status: !role.status };
+      }
+      return role;
+    });
     setData(updatedData);
   };
 
@@ -77,13 +148,13 @@ const Role = () => {
         Cell: ({ row }) => row.index + 1,
       },
       {
-        accessorKey: "roleName",
+        accessorKey: "role_name",
         header: "Role Name",
         size: 200,
         Cell: ({ cell }) => <Typography>{cell.getValue()}</Typography>,
       },
       {
-        accessorKey: "createdAt",
+        accessorKey: "created_at",
         header: "Created At",
         size: 250,
         Cell: ({ cell }) => (
@@ -101,8 +172,9 @@ const Role = () => {
         header: "Actions",
         size: 350,
         Cell: ({ row }) => {
-          const index = row.index;
-          const isActive = data[index].active;
+          const roleId = row.original.id; // Use the role's id here
+          const isActive =
+            data.find((role) => role.id === roleId)?.status ?? false;
           return (
             <Box
               sx={{
@@ -124,7 +196,7 @@ const Role = () => {
                 control={
                   <Switch
                     checked={isActive}
-                    onChange={() => handleToggleActive(index)}
+                    onChange={() => handleToggleActive(roleId)}
                     color={isActive ? "success" : "error"}
                   />
                 }
@@ -133,12 +205,12 @@ const Role = () => {
               />
 
               {/* Update role */}
-              <IconButton onClick={() => handleOpenRoleModal(index)}>
+              <IconButton onClick={() => handleOpenRoleModal(row.index)}>
                 <VisibilityIcon sx={{ color: "#ff8100" }} />
               </IconButton>
 
               {/* Delete role */}
-              <IconButton onClick={() => handleDeleteRole(index)}>
+              <IconButton onClick={() => handleDeleteRole(roleId)}>
                 <DeleteIcon sx={{ color: "red" }} />
               </IconButton>
             </Box>
@@ -181,6 +253,8 @@ const Role = () => {
         roleName={newRoleName}
         setRoleName={setNewRoleName}
         handleSave={handleSaveRole}
+        permissions={permissions} // Pass permissions as prop
+        setPermissions={setPermissions} // Pass setPermissions function as prop
       />
     </Box>
   );

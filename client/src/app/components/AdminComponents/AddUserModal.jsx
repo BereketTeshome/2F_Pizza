@@ -8,15 +8,19 @@ import {
   MenuItem,
 } from "@mui/material";
 
-const roles = ["Admin", "Investor", "Earner"];
+const roles = ["Manager", "Customer"];
 
 const AddUserModal = ({ open, handleClose, handleAddUser }) => {
   const [newUser, setNewUser] = useState({
-    name: "",
-    phoneNo: "",
+    adminName: "",
+    restaurantName: "",
+    logo: "",
     email: "",
+    password: "123456",
     location: "",
-    role: "",
+    phone: "",
+    status: true,
+    isAdmin: false,
   });
 
   const handleInputChange = (e) => {
@@ -26,14 +30,26 @@ const AddUserModal = ({ open, handleClose, handleAddUser }) => {
     });
   };
 
+  const handleRoleChange = (e) => {
+    const role = e.target.value;
+    setNewUser({
+      ...newUser,
+      isAdmin: role === "Manager",
+    });
+  };
+
   const handleAddClick = () => {
     handleAddUser(newUser);
     setNewUser({
-      name: "",
-      phoneNo: "",
+      adminName: "",
+      restaurantName: "",
+      logo: "",
       email: "",
+      password: "123456",
       location: "",
-      role: "",
+      phone: "",
+      status: true,
+      isAdmin: false,
     });
   };
 
@@ -58,16 +74,24 @@ const AddUserModal = ({ open, handleClose, handleAddUser }) => {
         <TextField
           fullWidth
           label="Name"
-          name="name"
-          value={newUser.name}
+          name="adminName"
+          value={newUser.adminName}
           onChange={handleInputChange}
           sx={{ mb: 2 }}
         />
         <TextField
           fullWidth
-          label="Phone No."
-          name="phoneNo"
-          value={newUser.phoneNo}
+          label="Restaurant Name"
+          name="restaurantName"
+          value={newUser.restaurantName}
+          onChange={handleInputChange}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          fullWidth
+          label="Logo URL"
+          name="logo"
+          value={newUser.logo}
           onChange={handleInputChange}
           sx={{ mb: 2 }}
         />
@@ -76,6 +100,14 @@ const AddUserModal = ({ open, handleClose, handleAddUser }) => {
           label="Email"
           name="email"
           value={newUser.email}
+          onChange={handleInputChange}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          fullWidth
+          label="Phone No."
+          name="phone"
+          value={newUser.phone}
           onChange={handleInputChange}
           sx={{ mb: 2 }}
         />
@@ -94,8 +126,8 @@ const AddUserModal = ({ open, handleClose, handleAddUser }) => {
             select
             label="Role"
             name="role"
-            value={newUser.role}
-            onChange={handleInputChange}
+            value={newUser.isAdmin ? "Manager" : "Customer"}
+            onChange={handleRoleChange}
             sx={{ width: "50%" }}
           >
             {roles.map((role) => (

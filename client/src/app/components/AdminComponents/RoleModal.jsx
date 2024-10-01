@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
-  Typography,
-  Button,
   Modal,
+  Typography,
   TextField,
   Checkbox,
   FormControlLabel,
+  Button,
 } from "@mui/material";
 
 const RoleModal = ({
@@ -15,21 +15,12 @@ const RoleModal = ({
   roleName,
   setRoleName,
   handleSave,
+  permissions, // New prop to hold the permissions state
+  setPermissions, // New prop to update the permissions state
 }) => {
-  const [permissions, setPermissions] = useState({
-    updateOrderStatus: true,
-    seeCustomers: true,
-    seeOrders: true,
-    addUsers: true,
-    createRoles: false,
-  });
-
-  // Handle checkbox changes
-  const handlePermissionChange = (permission) => {
-    setPermissions((prev) => ({
-      ...prev,
-      [permission]: !prev[permission],
-    }));
+  // Handle save
+  const handleSaveRole = () => {
+    handleSave(permissions);
   };
 
   return (
@@ -40,11 +31,11 @@ const RoleModal = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 450,
           bgcolor: "background.paper",
           boxShadow: 24,
-          p: 6,
-          borderRadius: 4,
+          p: 4,
+          borderRadius: 1,
+          width: 400,
         }}
       >
         {/* Title */}
@@ -75,7 +66,12 @@ const RoleModal = ({
             control={
               <Checkbox
                 checked={permissions.updateOrderStatus}
-                onChange={() => handlePermissionChange("updateOrderStatus")}
+                onChange={() =>
+                  setPermissions((prev) => ({
+                    ...prev,
+                    updateOrderStatus: !prev.updateOrderStatus,
+                  }))
+                }
                 sx={{ color: "#ff8100", "&.Mui-checked": { color: "#ff8100" } }}
               />
             }
@@ -85,7 +81,12 @@ const RoleModal = ({
             control={
               <Checkbox
                 checked={permissions.seeCustomers}
-                onChange={() => handlePermissionChange("seeCustomers")}
+                onChange={() =>
+                  setPermissions((prev) => ({
+                    ...prev,
+                    seeCustomers: !prev.seeCustomers,
+                  }))
+                }
                 sx={{ color: "#ff8100", "&.Mui-checked": { color: "#ff8100" } }}
               />
             }
@@ -95,7 +96,12 @@ const RoleModal = ({
             control={
               <Checkbox
                 checked={permissions.seeOrders}
-                onChange={() => handlePermissionChange("seeOrders")}
+                onChange={() =>
+                  setPermissions((prev) => ({
+                    ...prev,
+                    seeOrders: !prev.seeOrders,
+                  }))
+                }
                 sx={{ color: "#ff8100", "&.Mui-checked": { color: "#ff8100" } }}
               />
             }
@@ -105,7 +111,12 @@ const RoleModal = ({
             control={
               <Checkbox
                 checked={permissions.addUsers}
-                onChange={() => handlePermissionChange("addUsers")}
+                onChange={() =>
+                  setPermissions((prev) => ({
+                    ...prev,
+                    addUsers: !prev.addUsers,
+                  }))
+                }
                 sx={{ color: "#ff8100", "&.Mui-checked": { color: "#ff8100" } }}
               />
             }
@@ -115,7 +126,12 @@ const RoleModal = ({
             control={
               <Checkbox
                 checked={permissions.createRoles}
-                onChange={() => handlePermissionChange("createRoles")}
+                onChange={() =>
+                  setPermissions((prev) => ({
+                    ...prev,
+                    createRoles: !prev.createRoles,
+                  }))
+                }
                 sx={{ color: "#ff8100", "&.Mui-checked": { color: "#ff8100" } }}
               />
             }
@@ -123,17 +139,14 @@ const RoleModal = ({
           />
         </Box>
 
-        {/* Update Button */}
+        {/* Save Button */}
         <Box sx={{ width: "100%", textAlign: "center" }}>
           <Button
             variant="contained"
-            onClick={() => handleSave(permissions)}
-            sx={{
-              bgcolor: "#ff8100",
-              "&:hover": { bgcolor: "#ff8100" },
-            }}
+            onClick={handleSaveRole}
+            sx={{ bgcolor: "#ff8100", "&:hover": { bgcolor: "#ff8100" } }}
           >
-            Update
+            Save
           </Button>
         </Box>
       </Box>

@@ -15,9 +15,11 @@ import {
   Button,
   Divider,
 } from "@mui/material";
+import Cookies from "universal-cookie";
 
 const Sidebar = ({ isSidebarOpen }) => {
   const dispatch = useDispatch();
+  const cookie = new Cookies();
   const [activeItem, setActiveItem] = useState("orders");
 
   const sidebarItems = [
@@ -30,6 +32,14 @@ const Sidebar = ({ isSidebarOpen }) => {
   const handleItemClick = (action) => {
     setActiveItem(action);
     dispatch(changeComponent(action)); // dispatch the redux action to change components
+  };
+
+  const handleLogout = () => {
+    if (cookie.get("user_token")) {
+      cookie.remove("user_token");
+    } else if (sessionStorage.getItem("user_token")) {
+      sessionStorage.removeItem("user_token");
+    }
   };
 
   return (
@@ -109,8 +119,11 @@ const Sidebar = ({ isSidebarOpen }) => {
       <Box sx={{ padding: 2 }}>
         <Button
           color="primary"
+          component="a"
+          href="/Login"
           startIcon={<FaSignOutAlt />}
           fullWidth
+          onClick={() => handleLogout()}
           sx={{
             backgroundColor: "transparent",
             color: "#ff0000",

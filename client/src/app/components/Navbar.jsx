@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,19 +13,26 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [token, setToken] = useState(null); // state to hold the token
   const isDropdownOpen = Boolean(anchorEl);
   const cookie = new Cookies();
-  const token = cookie.get("user_token");
-  const filteredToken = token ? token : sessionStorage?.getItem("user_token");
-  const decodedToken = filteredToken ? jwtDecode(filteredToken) : "";
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userToken =
+        cookie.get("user_token") || sessionStorage.getItem("user_token");
+      setToken(userToken);
+    }
+  }, []);
+
+  const decodedToken = token ? jwtDecode(token) : "";
   const email = decodedToken?.email;
-  const isAdmin = decodedToken?.isAdmin;
+  const isAdmin = decodedToken?.isadmin;
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -38,14 +45,11 @@ const Navbar = () => {
   const handleLogout = () => {
     if (cookie.get("user_token")) {
       cookie.remove("user_token");
-      router.push("/Login");
     } else if (sessionStorage.getItem("user_token")) {
       sessionStorage.removeItem("user_token");
-      router.push("/Login");
     }
+    setToken(null); // Clear the token from state
   };
-
-  const router = useRouter();
 
   return (
     <AppBar
@@ -122,7 +126,9 @@ const Navbar = () => {
                   Dashboard
                 </MenuItem>
               )}
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout} component="a" href="/Login">
+                Logout
+              </MenuItem>
             </Menu>
           </Box>
         ) : (

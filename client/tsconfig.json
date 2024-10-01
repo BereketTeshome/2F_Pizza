@@ -25,7 +25,8 @@
     "**/*.tsx",
     "src/app/components/DarkSwitch.jsx",
     "src/app/components/DashboardNav.jsx",
-    "src/app/components/Sidebar.jsx"
+    "src/app/components/Sidebar.jsx",
+    "src/app/SearchResults/page.jsx"
   ],
   "exclude": ["node_modules"]
 }

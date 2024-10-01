@@ -6,16 +6,22 @@ import {
   IconButton,
   Avatar,
   Menu,
-  MenuItem,
   Box,
   Typography,
-  Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const DashboardNav = ({ toggleSidebar }) => {
   // State for the profile dropdown
   const [anchorEl, setAnchorEl] = useState(null);
+  const cookie = new Cookies();
+  const token = cookie.get("user_token");
+  const filteredToken = token ? token : sessionStorage?.getItem("user_token");
+  const decodedToken = filteredToken ? jwtDecode(filteredToken) : "";
+  const email = decodedToken?.email;
+  const logo = decodedToken?.logo;
 
   const toggleDropdown = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,14 +30,6 @@ const DashboardNav = ({ toggleSidebar }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const menuItems = [
-    { label: "Dashboard", href: "#" },
-    { label: "Settings", href: "#" },
-    { label: "Earnings", href: "#" },
-    { label: "Log out", href: "#" },
-  ];
-
   return (
     <AppBar
       position="fixed"
@@ -78,7 +76,7 @@ const DashboardNav = ({ toggleSidebar }) => {
           <IconButton onClick={toggleDropdown} sx={{ p: 0 }}>
             <Avatar
               alt="User Photo"
-              src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+              src={logo}
               sx={{ width: 40, height: 40 }}
             />
           </IconButton>
@@ -94,23 +92,10 @@ const DashboardNav = ({ toggleSidebar }) => {
             }}
           >
             <Box sx={{ px: 2, py: 1 }}>
-              <Typography variant="body1" fontWeight="bold">
-                Bereket Teshome
-              </Typography>
               <Typography variant="body2" color="text.secondary">
-                bereket@gmail.com
+                {email}
               </Typography>
             </Box>
-            {menuItems.map((item) => (
-              <MenuItem key={item.label} onClick={handleClose}>
-                <Button
-                  href={item.href}
-                  sx={{ width: "100%", textAlign: "left" }}
-                >
-                  {item.label}
-                </Button>
-              </MenuItem>
-            ))}
           </Menu>
         </Box>
       </Toolbar>
