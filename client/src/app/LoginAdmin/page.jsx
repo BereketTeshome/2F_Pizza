@@ -178,13 +178,14 @@ const LogInAdmin = () => {
               bgcolor: `${isLoading ? "lightgray" : "#446497"}`,
             },
           }}
-          onClick={isLoading === false && handleLogin}
+          onClick={!isLoading ? handleLogin : null}
           startIcon={
             isLoading && <CircularProgress color="inherit" size={20} />
           }
         >
           {isLoading ? "Logging..." : "Login"}
         </Button>
+
         <Typography sx={{ textAlign: "center", marginTop: 2 }}>
           Don&apos;t have an account?{" "}
           <Link

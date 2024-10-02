@@ -13,8 +13,9 @@ const SearchBar = () => {
         margin: "auto",
         borderRadius: "50px",
         backgroundColor: "#fff",
-        padding: "7px 15px",
+        padding: "5px 12px",
         boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
+        scale: "0.9",
       }}
     >
       <InputBase

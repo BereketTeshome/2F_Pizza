@@ -6,12 +6,12 @@ import TopRestaurants from "./components/TopRestaurants";
 
 export default function Home() {
   return (
-    <div>
+    <>
       <Hero />
       <Featured />
       <TopRestaurants />
       <Popular />
       <Fasting />
-    </div>
+    </>
   );
 }

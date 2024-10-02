@@ -19,6 +19,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
+import Link from "next/link";
 
 const schema = z
   .object({
@@ -302,6 +303,22 @@ const RegisterAdmin = () => {
         >
           {isLoading ? "Signing up..." : "Register as Admin"}
         </Button>
+        <Typography sx={{ textAlign: "center", marginTop: 2 }}>
+          Already have an account?{" "}
+          <Link href="/LoginAdmin" underline="none">
+            <Typography component="span" sx={{ color: "#ff9921" }}>
+              Login
+            </Typography>
+          </Link>
+        </Typography>
+        <Typography sx={{ textAlign: "center", marginTop: 2 }}>
+          Want to register as a user?{" "}
+          <Link href="/Register" underline="none">
+            <Typography component="span" sx={{ color: "#ff9921" }}>
+              Register as User
+            </Typography>
+          </Link>
+        </Typography>
       </Box>
     </Box>
   );

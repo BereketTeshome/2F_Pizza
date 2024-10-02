@@ -4,7 +4,7 @@ const TopRestaurants = () => {
   return (
     <Box
       sx={{
-        paddingX: 6,
+        paddingX: { xs: 1, sm: 6 },
         minHeight: "400px",
         background: "linear-gradient(to bottom, white, #fed2a5, white)",
       }}

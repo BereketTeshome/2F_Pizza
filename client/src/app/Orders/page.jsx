@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Box, Grid, Typography, Button, Card } from "@mui/material";
+import { Box, Typography, Button, Card } from "@mui/material";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { jwtDecode } from "jwt-decode"; // Remove the braces
+import { jwtDecode } from "jwt-decode";
 
 import NothingFound from "../components/NothingFound";
 
@@ -84,114 +84,120 @@ const Orders = () => {
         </Typography>
       )}
 
-      <Grid container spacing={5}>
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 4,
+          justifyContent: "center",
+        }}
+      >
         {orders.map((order) => (
-          <Grid item xs={12} sm={6} md={3.9} key={order.id}>
-            <Card
+          <Card
+            key={order.id}
+            sx={{
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              borderRadius: "20px",
+              minWidth: "300px",
+              width: "100%",
+              maxWidth: "350px",
+            }}
+          >
+            {/* Circular Background with Pizza Image */}
+            <Box
               sx={{
-                p: 2,
+                width: 300,
+                height: 300,
+                borderRadius: "50%",
+                background: "#fbe6cc",
                 display: "flex",
-                flexDirection: "column",
+                justifyContent: "center",
                 alignItems: "center",
-                borderRadius: "20px",
-                scale: "0.9",
+                mb: 2,
               }}
             >
-              {/* Circular Background with Pizza Image */}
               <Box
+                component="img"
+                src="/full_pizza.png" // Assuming all pizzas use the same image
+                alt={order.pizza_name}
                 sx={{
-                  width: 300,
-                  height: 300,
-                  borderRadius: "50%",
-                  background: "#fbe6cc",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  mb: 2,
+                  width: "87%",
+                  height: "87%",
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
+
+            {/* Pizza Name */}
+            <Typography
+              variant="h6"
+              sx={{ textAlign: "start", width: "100%", fontWeight: "bold" }}
+            >
+              {order.pizza_name}
+            </Typography>
+
+            {/* Pizza Ingredients */}
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ mb: 2, textAlign: "start", width: "100%" }}
+            >
+              {order.toppings.join(", ")}
+            </Typography>
+
+            {/* Price and Order Status */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                mb: 2,
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: "1.8rem",
+                  fontWeight: "bold",
+                  color: "#01c550",
+                  position: "relative",
                 }}
               >
+                {order.price}
                 <Box
-                  component="img"
-                  src="/full_pizza.png" // Assuming all pizzas use the same image
-                  alt={order.pizza_name}
+                  component="span"
+                  variant="body2"
                   sx={{
-                    width: "87%",
-                    height: "87%",
-                    objectFit: "contain",
+                    position: "absolute",
+                    top: "-2px",
+                    right: "-25px",
+                    fontSize: "0.8rem",
+                    color: "black",
                   }}
-                />
-              </Box>
-
-              {/* Pizza Name */}
-              <Typography
-                variant="h6"
-                sx={{ textAlign: "start", width: "100%", fontWeight: "bold" }}
-              >
-                {order.pizza_name}
+                >
+                  Birr
+                </Box>
               </Typography>
-
-              {/* Pizza Ingredients */}
               <Typography
-                variant="body2"
-                color="textSecondary"
-                sx={{ mb: 2, textAlign: "start", width: "100%" }}
-              >
-                {order.toppings.join(", ")}
-              </Typography>
-
-              {/* Price and Order Button */}
-              <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  mb: 2,
-                  alignItems: "center",
+                  fontSize: "1.5rem",
+                  fontWeight: "bold",
+                  color:
+                    order.order_status_user === "Ordered"
+                      ? "#f57c00"
+                      : "#008000",
                 }}
               >
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontSize: "1.8rem",
-                    fontWeight: "bold",
-                    color: "#01c550",
-                    position: "relative",
-                  }}
-                >
-                  {order.price}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      position: "absolute",
-                      top: "-2px",
-                      right: "-20px",
-                      fontSize: "0.8rem",
-                      color: "black",
-                    }}
-                  >
-                    Birr
-                  </Typography>
-                </Typography>
-                <Typography
-                  variant="contained"
-                  sx={{
-                    fontSize: "1.5rem",
-                    fontWeight: "bold",
-                    color:
-                      order.order_status_user === "Ordered"
-                        ? "#f57c00"
-                        : "#008000",
-                  }}
-                >
-                  {order.order_status_user === "Ordered"
-                    ? "Ordered"
-                    : "Received"}
-                </Typography>
-              </Box>
-            </Card>
-          </Grid>
+                {order.order_status_user === "Ordered" ? "Ordered" : "Received"}
+              </Typography>
+            </Box>
+          </Card>
         ))}
-      </Grid>
+      </Box>
     </Box>
   );
 };

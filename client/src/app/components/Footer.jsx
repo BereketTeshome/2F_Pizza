@@ -24,13 +24,22 @@ const Footer = () => {
         sx={{
           backgroundColor: "#ccb691",
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },
           justifyContent: "space-between",
           alignItems: "center",
           padding: "40px",
+          gap: { xs: 4, md: 0 },
         }}
       >
         {/* Left Side Links */}
-        <Box sx={{ display: "flex", gap: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: { xs: 2, sm: 3 },
+            alignItems: { xs: "center", sm: "flex-start" },
+          }}
+        >
           <Link href="/" passHref>
             <Typography
               sx={{
@@ -58,15 +67,22 @@ const Footer = () => {
         </Box>
 
         {/* Right Side Logo, Feedback Input, and Send Icon */}
-        <Box sx={{}}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
           {/* Logo with Pizza Text */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              m: 1,
               gap: 2,
+              m: 1,
             }}
           >
             <Box
@@ -96,7 +112,7 @@ const Footer = () => {
             sx={{
               backgroundColor: "#fff",
               borderRadius: "10px",
-              width: "300px", // Set the desired width
+              width: { xs: "100%", sm: "300px" }, // Responsive width
               height: "40px", // Set a specific height
               "& .MuiOutlinedInput-root": {
                 paddingRight: 0,
@@ -133,13 +149,23 @@ const Footer = () => {
         sx={{
           backgroundColor: "#000",
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
           alignItems: "center",
           padding: "10px 20px",
+          gap: { xs: 2, sm: 0 },
         }}
       >
         {/* Copyright Text */}
-        <Box sx={{ display: "flex", gap: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: { xs: 1, sm: 4 },
+            alignItems: { xs: "center", sm: "flex-start" },
+            textAlign: { xs: "center", sm: "left" },
+          }}
+        >
           <Typography sx={{ color: "#fff", fontSize: "0.9rem" }}>
             © 2024 Pizza All Rights Reserved
           </Typography>
@@ -151,16 +177,40 @@ const Footer = () => {
 
         {/* Social Media Icons */}
         <Box sx={{ display: "flex", gap: 2 }}>
-          <IconButton sx={{ color: "#fff", background: "#141414" }}>
+          <IconButton
+            sx={{
+              color: "#fff",
+              background: "#141414",
+              "&:hover": { background: "#333" },
+            }}
+          >
             <FaFacebookF size={15} />
           </IconButton>
-          <IconButton sx={{ color: "#fff", background: "#141414" }}>
+          <IconButton
+            sx={{
+              color: "#fff",
+              background: "#141414",
+              "&:hover": { background: "#333" },
+            }}
+          >
             <FaLinkedinIn size={15} />
           </IconButton>
-          <IconButton sx={{ color: "#fff", background: "#141414" }}>
+          <IconButton
+            sx={{
+              color: "#fff",
+              background: "#141414",
+              "&:hover": { background: "#333" },
+            }}
+          >
             <FaTwitter size={15} />
           </IconButton>
-          <IconButton sx={{ color: "#fff", background: "#141414" }}>
+          <IconButton
+            sx={{
+              color: "#fff",
+              background: "#141414",
+              "&:hover": { background: "#333" },
+            }}
+          >
             <FaYoutube size={15} />
           </IconButton>
         </Box>

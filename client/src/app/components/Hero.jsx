@@ -9,20 +9,20 @@ const Hero = () => {
         display: "flex",
         minHeight: "80vh",
         alignItems: "center",
-        paddingLeft: "10px",
+        paddingLeft: { xs: "1px", md: "10px" },
         pb: 10,
         background: "linear-gradient(to bottom, white, #fed2a5, white)", // Gradient background
         width: "100%",
         overflow: "hidden",
       }}
     >
-      <Box sx={{ maxWidth: "600px", ml: 6 }}>
+      <Box sx={{ maxWidth: "600px", ml: { xs: 1, sm: 6 } }}>
         <Typography
           variant="h1"
           sx={{
             fontWeight: "bold",
             color: "orange",
-            fontSize: "8rem",
+            fontSize: { xs: "3rem", md: "8rem" },
           }}
         >
           Order <span style={{ opacity: 0.5 }}>us</span>
@@ -37,8 +37,8 @@ const Hero = () => {
       <Box
         component="img"
         sx={{
-          height: "70%",
-          width: "30%",
+          height: { xs: "45vh", sm: "60vh", md: "85vh" },
+          width: "fit-content",
           position: "relative",
           right: 0,
           top: "1rem",

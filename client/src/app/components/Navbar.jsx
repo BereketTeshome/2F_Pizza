@@ -19,6 +19,7 @@ import { jwtDecode } from "jwt-decode";
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [token, setToken] = useState(null); // state to hold the token
+  const [tabValue, setTabValue] = useState(0); // state to track the active tab
   const isDropdownOpen = Boolean(anchorEl);
   const cookie = new Cookies();
 
@@ -29,8 +30,8 @@ const Navbar = () => {
       setToken(userToken);
     }
   }, []);
-
   const decodedToken = token ? jwtDecode(token) : "";
+
   const email = decodedToken?.email;
   const isAdmin = decodedToken?.isadmin;
 
@@ -51,23 +52,45 @@ const Navbar = () => {
     setToken(null); // Clear the token from state
   };
 
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   return (
     <AppBar
       position="static"
       sx={{ backgroundColor: "white", color: "#333", boxShadow: "none" }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <Image src="/logo.png" alt="Logo" width={40} height={40} />
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 3 } }}
+        >
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={40}
+            height={40}
+            style={{ width: "auto", height: "auto" }}
+          />
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", color: "orange", fontFamily: "cursive" }}
+            sx={{
+              fontWeight: "bold",
+              color: "orange",
+              fontFamily: "cursive",
+              display: { xs: "none", sm: "block" },
+            }}
           >
             2F Pizza
           </Typography>
         </Box>
 
-        <Tabs textColor="inherit" className="flex gap-16">
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          textColor="inherit"
+          className="flex gap-16"
+        >
           <Tab
             label="Home"
             component={Link}
@@ -94,7 +117,6 @@ const Navbar = () => {
                 width: 70,
                 height: 70,
                 scale: 0.65,
-
                 ":hover": {
                   backgroundColor: "darkblue",
                 },

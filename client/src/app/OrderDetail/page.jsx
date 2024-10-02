@@ -8,82 +8,33 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { RxArrowTopRight } from "react-icons/rx";
 import OrderSuccessPopup from "../components/OrderSuccessPopup";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
+import relatedPizzas from "../../store/RelatedPizzas"; // Importing related pizzas data from a separate JSON file
 
-// Dummy data for related pizzas
-const relatedPizzas = [
-  {
-    name: "Margherita",
-    image: "/full_pizza.png",
-    ingredients: "Cheese, Tomato, Basil",
-  },
-  {
-    name: "Pepperoni",
-    image: "/full_pizza2.png",
-    ingredients: "Pepperoni, Cheese",
-  },
-  {
-    name: "Veggie",
-    image: "/full_pizza.png",
-    ingredients: "Bell Pepper, Onion, Mushroom",
-  },
-  {
-    name: "Margherita",
-    image: "/full_pizza.png",
-    ingredients: "Cheese, Tomato, Basil",
-  },
-  {
-    name: "Pepperoni",
-    image: "/full_pizza2.png",
-    ingredients: "Pepperoni, Cheese",
-  },
-  {
-    name: "Veggie",
-    image: "/full_pizza.png",
-    ingredients: "Bell Pepper, Onion, Mushroom",
-  },
-  {
-    name: "Margherita",
-    image: "/full_pizza.png",
-    ingredients: "Cheese, Tomato, Basil",
-  },
-  {
-    name: "Pepperoni",
-    image: "/full_pizza2.png",
-    ingredients: "Pepperoni, Cheese",
-  },
-  {
-    name: "Veggie",
-    image: "/full_pizza.png",
-    ingredients: "Bell Pepper, Onion, Mushroom",
-  },
-  {
-    name: "Margherita",
-    image: "/full_pizza.png",
-    ingredients: "Cheese, Tomato, Basil",
-  },
-  {
-    name: "Pepperoni",
-    image: "/full_pizza2.png",
-    ingredients: "Pepperoni, Cheese",
-  },
-  {
-    name: "Veggie",
-    image: "/full_pizza.png",
-    ingredients: "Bell Pepper, Onion, Mushroom",
-  },
-];
 const OrderPage = () => {
   const searchParams = useSearchParams();
   const [modalOpen, setModalOpen] = useState(false);
+  const [filtered, setFiltered] = useState("");
   const cookie = new Cookies();
   const token = cookie.get("user_token");
-  const filteredToken = token ? token : sessionStorage?.getItem("user_token");
-  const decodedToken = filteredToken ? jwtDecode(filteredToken) : "";
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const filteredToken = token
+        ? token
+        : sessionStorage?.getItem("user_token");
+      setFiltered(filteredToken);
+    }
+  }, [token]);
+  const decodedToken = filtered ? jwtDecode(filtered) : "";
   const phone = decodedToken?.phone;
 
   // Initialize state for the pizza data
@@ -172,20 +123,27 @@ const OrderPage = () => {
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Box sx={{ display: "flex", gap: 10 }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: isSmallScreen ? 2 : 10,
+          flexDirection: isSmallScreen ? "column" : "row",
+          alignItems: isSmallScreen ? "center" : "flex-start",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
             gap: 4,
-            alignItems: "center", // Align the image and content vertically
+            alignItems: "center",
           }}
         >
           {/* Main Pizza Image */}
           {mainImage && (
             <Box
               sx={{
-                width: "300px",
-                height: "300px",
+                width: isSmallScreen ? "250px" : "300px",
+                height: isSmallScreen ? "250px" : "300px",
                 borderRadius: "50%",
                 backgroundColor: "#fbe0c1", // Circle background
                 display: "flex",
@@ -198,8 +156,8 @@ const OrderPage = () => {
                 src={mainImage}
                 alt={pizzaData.pizza_name}
                 sx={{
-                  width: "250px",
-                  height: "250px",
+                  width: isSmallScreen ? "220px" : "250px",
+                  height: isSmallScreen ? "220px" : "250px",
                   borderRadius: "50%",
                   objectFit: "cover",
                 }}
@@ -209,7 +167,14 @@ const OrderPage = () => {
 
           {/* Pizza Image Selector - Vertical */}
           <Box>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
               {/* Tiny pizza for current image */}
               <Box
                 sx={{
@@ -271,29 +236,41 @@ const OrderPage = () => {
         </Box>
 
         {/* Pizza Details */}
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h4" sx={{ mb: 2 }}>
+        <Box sx={{ mt: isSmallScreen ? 2 : 4 }}>
+          <Typography
+            variant="h4"
+            sx={{ mb: 2, textAlign: isSmallScreen ? "center" : "left" }}
+          >
             {pizzaData.pizza_name}
           </Typography>
 
           {/* Toppings Checkboxes */}
-          {pizzaData.toppings &&
-            pizzaData.toppings.split(", ").map((topping) => (
-              <FormControlLabel
-                key={topping}
-                control={
-                  <Checkbox
-                    checked={selectedToppings.has(topping)}
-                    onChange={() => handleToggleTopping(topping)}
-                    sx={{
-                      color: "#ff8100",
-                      "&.Mui-checked": { color: "#ff8100" },
-                    }}
-                  />
-                }
-                label={topping}
-              />
-            ))}
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1,
+              justifyContent: isSmallScreen ? "center" : "flex-start",
+            }}
+          >
+            {pizzaData.toppings &&
+              pizzaData.toppings.split(", ").map((topping) => (
+                <FormControlLabel
+                  key={topping}
+                  control={
+                    <Checkbox
+                      checked={selectedToppings.has(topping)}
+                      onChange={() => handleToggleTopping(topping)}
+                      sx={{
+                        color: "#ff8100",
+                        "&.Mui-checked": { color: "#ff8100" },
+                      }}
+                    />
+                  }
+                  label={topping}
+                />
+              ))}
+          </Box>
 
           {/* Quantity Selector */}
           <Box
@@ -302,6 +279,7 @@ const OrderPage = () => {
               alignItems: "center",
               mt: 2,
               gap: 2,
+              justifyContent: isSmallScreen ? "center" : "flex-start",
             }}
           >
             <Button
@@ -322,13 +300,13 @@ const OrderPage = () => {
               sx={{
                 minWidth: "40px",
                 backgroundColor: "orange",
+
                 "&:hover": { backgroundColor: "#e69500" },
               }}
             >
               +
             </Button>
             {/* Total Price */}
-
             <Typography
               variant="body1"
               sx={{
@@ -341,6 +319,7 @@ const OrderPage = () => {
               {totalPrice}
               <Typography
                 variant="body2"
+                component="span"
                 sx={{
                   position: "absolute",
                   top: "-2px",
@@ -392,9 +371,9 @@ const OrderPage = () => {
           overflowX: "auto",
         }}
       >
-        {relatedPizzas.map((pizza) => (
+        {relatedPizzas.map((pizza, index) => (
           <Box
-            key={pizza.name}
+            key={index}
             sx={{
               minWidth: "200px",
               width: "250px",
