@@ -47,7 +47,7 @@ const FastingPizzas = [
     id: 5,
     pizza_name: "Fasting Caprese Delight",
     owner_name: "Fresh Flavors",
-    owner_image: "profile1.png",
+    owner_image: "profile6.png",
     toppings: ["Tomato Slices", "Fresh Mozzarella", "Basil Pesto"],
     quantity: 1,
     created_at: "2024-10-01T00:30:23.018Z",
