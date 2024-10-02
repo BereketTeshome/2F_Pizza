@@ -36,7 +36,7 @@ const Popular = () => {
   return (
     <Box
       sx={{
-        paddingX: 6,
+        paddingX: { xs: 1, sm: 6 },
         background: "linear-gradient(to bottom, white, #fed2a5, #fff)",
       }}
     >

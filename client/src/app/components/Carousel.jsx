@@ -6,37 +6,7 @@ import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Box, Button, Typography } from "@mui/material";
 import "../../../CarouselComponent.css"; // Import your CSS file
-
-// Slide content data with different background colors
-const slides = [
-  {
-    id: 1,
-    img: "/slide1.png",
-    title: "Make your first order and get",
-    highlight: "50% off",
-    description:
-      "Welcome to 2f-pizza, your favorite pizza delivery site! Get fresh, delicious pizza delivered to your doorstep in no time.",
-    bgColor: "#2f2f2f",
-  },
-  {
-    id: 2,
-    img: "/slide2.png",
-    title: "Make your first order and get",
-    highlight: "50% off",
-    description:
-      "Welcome to 2f-pizza, your favorite pizza delivery site! Get fresh, delicious pizza delivered to your doorstep in no time.",
-    bgColor: "#50482b",
-  },
-  {
-    id: 3,
-    img: "/slide3.png",
-    title: "Make your first order and get",
-    highlight: "50% off",
-    description:
-      "Welcome to 2f-pizza, your favorite pizza delivery site! Get fresh, delicious pizza delivered to your doorstep in no time.",
-    bgColor: "#296d60",
-  },
-];
+import Slides from "../../store/Slides";
 
 export default function CarouselComponent() {
   return (
@@ -53,14 +23,12 @@ export default function CarouselComponent() {
           overflow: "hidden",
         }}
       >
-        {slides.map((slide) => (
+        {Slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
-                width: "100%",
-                height: "300px",
+                display: "flex", // Responsive: stack content on smaller screens
+                width: "100%", // Adjust height on small screens
                 borderRadius: "15px",
                 overflow: "hidden",
                 backgroundColor: slide.bgColor,
@@ -69,42 +37,63 @@ export default function CarouselComponent() {
             >
               <Box
                 sx={{
-                  flex: 1,
                   padding: 2,
-                  textAlign: "start",
+                  padding: { xs: 1, sm: 2, md: 3 }, // Adjust padding based on screen size
+                  width: "fit-content",
+                  textAlign: "left",
                   color: "#fff",
                 }}
               >
-                <Typography sx={{ fontSize: "2rem" }}>
+                <Typography
+                  sx={{
+                    fontSize: { xs: "1.2rem", sm: "1.8rem", md: "2.5rem" },
+                    fontWeight: "bold",
+                    lineHeight: "1.2",
+                  }}
+                >
                   {slide.title}{" "}
                   <span style={{ color: "orange" }}>{slide.highlight}</span>
                 </Typography>
                 <Typography
-                  sx={{ fontSize: "0.8rem", my: 2, fontWeight: "lighter" }}
+                  sx={{
+                    fontSize: { xs: "0.8rem", sm: "1rem", md: "1.2rem" }, // Responsive font size for description
+                    my: { xs: 1, sm: 2 }, // Margin adjustments for spacing
+                    fontWeight: "lighter",
+                  }}
                 >
                   {slide.description}
                 </Typography>
                 <Button
-                  component="a"
                   variant="contained"
                   color="warning"
-                  sx={{ fontWeight: "bold" }}
-                  href="#popularPizzas"
+                  sx={{
+                    fontWeight: "bold",
+                    width: { xs: "100%", sm: "auto" }, // Full-width button on small screens
+                    fontSize: { xs: "0.8rem", sm: "1rem" }, // Full-width button on small screens
+                  }}
                 >
                   Order Now
                 </Button>
               </Box>
               <Box
-                component="img"
                 sx={{
-                  flex: 1,
-                  maxWidth: "40%",
-                  height: "auto",
-                  ml: "auto",
+                  width: { xs: "100%", md: "50%" }, // Image takes full width on small, half on medium
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-                alt="Header Image"
-                src={slide.img}
-              />
+              >
+                <Box
+                  component="img"
+                  sx={{
+                    flex: 2,
+                    maxWidth: "300px",
+                    ml: { xs: 0, sm: "auto" },
+                  }}
+                  alt="Pizza Image"
+                  src={slide.img}
+                />
+              </Box>
             </Box>
           </SwiperSlide>
         ))}
