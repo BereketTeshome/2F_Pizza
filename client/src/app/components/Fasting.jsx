@@ -20,7 +20,7 @@ const Fasting = () => {
   return (
     <Box
       sx={{
-        paddingX: 6,
+        paddingX: { xs: 1, sm: 6 },
         background: "linear-gradient(to bottom, white, #FFF8F1)",
       }}
     >
@@ -57,7 +57,7 @@ const Fasting = () => {
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "20px",
-              minWidth: "350px",
+              minWidth: "250px",
               flexShrink: 0,
             }}
           >

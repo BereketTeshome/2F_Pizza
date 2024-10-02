@@ -70,9 +70,7 @@ const Popular = () => {
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "20px",
-              width: "100%",
-              maxWidth: "400px",
-              minWidth: "350px",
+              width: "320px",
               boxSizing: "border-box",
             }}
           >
