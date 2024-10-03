@@ -57,7 +57,10 @@ const SignUp = () => {
     try {
       setIsLoading(true);
       schema.parse(formData);
-      await axios.post("http://localhost:6543/accounts/register", formData);
+      await axios.post(
+        "https://2-f-pizza-backend.vercel.app/accounts/register",
+        formData
+      );
       alert("User registered successfully!");
       setIsLoading(false);
       router.push("/Login");

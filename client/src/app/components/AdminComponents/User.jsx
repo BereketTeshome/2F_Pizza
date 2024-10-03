@@ -22,7 +22,7 @@ const User = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:6543/accounts/users"
+          "https://2-f-pizza-backend.vercel.app/accounts/users"
         );
         setData(response.data);
       } catch (error) {
@@ -39,7 +39,10 @@ const User = () => {
   // Handle adding a new user
   const handleAddUser = async (newUser) => {
     try {
-      await axios.post("http://localhost:6543/accounts/register", newUser);
+      await axios.post(
+        "https://2-f-pizza-backend.vercel.app/accounts/register",
+        newUser
+      );
       setData((prevData) => [...prevData, newUser]);
       setOpenAddUser(false);
     } catch (error) {
@@ -59,7 +62,9 @@ const User = () => {
   const handleDeleteUser = async (userId) => {
     try {
       // Use userId directly in the delete URL
-      await axios.delete(`http://localhost:6543/accounts/users/${userId}`);
+      await axios.delete(
+        `https://2-f-pizza-backend.vercel.app/accounts/users/${userId}`
+      );
 
       // Remove the deleted user from the UI
       const updatedData = data.filter((user) => user.id !== userId);

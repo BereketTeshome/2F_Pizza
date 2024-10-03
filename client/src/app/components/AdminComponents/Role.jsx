@@ -42,7 +42,9 @@ const Role = () => {
 
         if (restaurantname) {
           // Fetch all roles from the server
-          const response = await axios.get("http://localhost:6543/role");
+          const response = await axios.get(
+            "https://2-f-pizza-backend.vercel.app/role"
+          );
 
           // Filter roles by owner_name matching the restaurantname
           const filteredData = response.data.filter(
@@ -104,9 +106,11 @@ const Role = () => {
     };
 
     try {
-      await axios.post("http://localhost:6543/role", newRole);
+      await axios.post("https://2-f-pizza-backend.vercel.app/role", newRole);
       // Fetch updated roles list
-      const response = await axios.get("http://localhost:6543/role");
+      const response = await axios.get(
+        "https://2-f-pizza-backend.vercel.app/role"
+      );
       setData(response.data);
     } catch (error) {
       console.error("Error saving role:", error);
@@ -118,7 +122,7 @@ const Role = () => {
   // Handle deleting a role based on its ID
   const handleDeleteRole = async (roleId) => {
     try {
-      await axios.delete(`http://localhost:6543/role/${roleId}`);
+      await axios.delete(`https://2-f-pizza-backend.vercel.app/role/${roleId}`);
       // Remove the deleted role from the UI
       const updatedData = data.filter((role) => role.id !== roleId);
       setData(updatedData);

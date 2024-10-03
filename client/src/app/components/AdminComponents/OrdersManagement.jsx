@@ -40,7 +40,9 @@ const OrdersManagement = () => {
 
           if (restaurantname) {
             // Fetch all orders
-            const response = await axios.get("http://localhost:6543/order");
+            const response = await axios.get(
+              "https://2-f-pizza-backend.vercel.app/order"
+            );
 
             // Filter orders by restaurantname
             const filteredData = response.data.filter(

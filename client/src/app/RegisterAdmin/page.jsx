@@ -91,12 +91,15 @@ const RegisterAdmin = () => {
       schema.parse(formData);
 
       // Send form data including the image URL (logo)
-      await axios.post("http://localhost:6543/accounts/register", {
-        ...formData,
-        logo: imageUrl || "/user.png", // Default image URL in case none is provided
-        status: true,
-        isadmin: true,
-      });
+      await axios.post(
+        "https://2-f-pizza-backend.vercel.app/accounts/register",
+        {
+          ...formData,
+          logo: imageUrl || "/user.png", // Default image URL in case none is provided
+          status: true,
+          isadmin: true,
+        }
+      );
       alert("Admin registered successfully!");
       setIsLoading(false);
       router.push("/LoginAdmin");

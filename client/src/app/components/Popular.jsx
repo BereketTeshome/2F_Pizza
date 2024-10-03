@@ -11,7 +11,7 @@ const Popular = () => {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get("http://localhost:6543/pizzas")
+      .get("https://2-f-pizza-backend.vercel.app/pizzas")
       .then((response) => {
         setPizzas(response.data.slice(0, 6));
       })

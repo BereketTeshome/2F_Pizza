@@ -40,7 +40,7 @@ const LogIn = () => {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "http://localhost:6543/accounts/login",
+        "https://2-f-pizza-backend.vercel.app/accounts/login",
         { email, password }
       );
       const data = response.data;

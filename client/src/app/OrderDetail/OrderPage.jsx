@@ -114,7 +114,7 @@ const OrderPage = () => {
 
     try {
       console.log(orderData);
-      await axios.post("http://localhost:6543/order", orderData);
+      await axios.post("https://2-f-pizza-backend.vercel.app/order", orderData);
       setModalOpen(true); // Open the success modal
     } catch (error) {
       console.error("Failed to submit order", error);

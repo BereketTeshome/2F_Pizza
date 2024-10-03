@@ -35,7 +35,9 @@ const Orders = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:6543/order");
+        const response = await axios.get(
+          "https://2-f-pizza-backend.vercel.app/order"
+        );
         const filteredOrders = response.data.filter(
           (order) => order.customer_phone === customerPhone
         );
