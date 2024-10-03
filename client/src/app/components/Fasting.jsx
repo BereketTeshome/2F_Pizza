@@ -117,9 +117,23 @@ const Fasting = () => {
                   fontSize: "1.8rem",
                   fontWeight: "bold",
                   color: "#01c550",
+                  position: "relative",
                 }}
               >
-                {pizza.price} Birr
+                {pizza.price}
+                <Box
+                  component="span"
+                  variant="body2"
+                  sx={{
+                    position: "absolute",
+                    top: "-2px",
+                    right: "-25px",
+                    fontSize: "0.8rem",
+                    color: "black",
+                  }}
+                >
+                  Birr
+                </Box>
               </Typography>
               <Button
                 variant="contained"
@@ -128,7 +142,7 @@ const Fasting = () => {
                   textTransform: "none",
                   px: 6,
                   py: 1,
-                  fontSize: "1.3rem",
+                  fontSize: "1rem",
                 }}
                 onClick={() => handleOrderClick(pizza)}
               >

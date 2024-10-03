@@ -4,7 +4,7 @@ const pool = require("../db");
 const getAllPizzas = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM pizza");
-    if (result.rows.length < 0) {
+    if (result.rows.length < 1) {
       return res.status(404).json({ msg: "No pizza found" });
     }
     res.status(200).json(result.rows);

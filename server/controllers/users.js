@@ -7,7 +7,7 @@ const getUsers = async (req, res) => {
     const result = await pool.query("SELECT * FROM users");
     const users = result.rows;
     if (users.length < 1) {
-      return res.status(404).json({ error: "No use found!" });
+      return res.status(404).json({ error: "No user found!" });
     }
 
     res.status(200).json(users);
