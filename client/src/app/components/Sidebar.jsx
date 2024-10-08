@@ -35,10 +35,10 @@ const Sidebar = ({ isSidebarOpen }) => {
   };
 
   const handleLogout = () => {
-    if (cookie.get("user_token")) {
-      cookie.remove("user_token");
-    } else if (sessionStorage.getItem("user_token")) {
-      sessionStorage.removeItem("user_token");
+    if (cookie.get("two_access_token")) {
+      cookie.remove("two_access_token");
+    } else if (sessionStorage.getItem("two_access_token")) {
+      sessionStorage.removeItem("two_access_token");
     }
   };
 

@@ -22,7 +22,7 @@ const OrderPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [filtered, setFiltered] = useState("");
   const cookie = new Cookies();
-  const token = cookie.get("user_token");
+  const token = cookie.get("two_access_token");
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -30,7 +30,7 @@ const OrderPage = () => {
     if (typeof window !== "undefined") {
       const filteredToken = token
         ? token
-        : sessionStorage?.getItem("user_token");
+        : sessionStorage?.getItem("two_access_token");
       setFiltered(filteredToken);
     }
   }, [token]);
@@ -215,13 +215,13 @@ const OrderPage = () => {
                   alignItems: "center",
                   cursor: "pointer",
                   border:
-                    mainImage === "/full_pizza2.png" ? "2px solid orange" : "",
+                    mainImage === "/alternative.png" ? "2px solid orange" : "",
                 }}
-                onClick={() => handleImageChange("/full_pizza2.png")}
+                onClick={() => handleImageChange("/alternative.png")}
               >
                 <Box
                   component="img"
-                  src="/full_pizza2.png"
+                  src="/alternative.png"
                   alt="Default pizza"
                   sx={{
                     width: "50px",

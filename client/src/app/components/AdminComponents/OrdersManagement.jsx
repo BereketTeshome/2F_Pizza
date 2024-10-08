@@ -26,7 +26,8 @@ const OrdersManagement = () => {
       // Check if we are in the browser
       const cookie = new Cookies();
       const token =
-        cookie.get("user_token") || sessionStorage?.getItem("user_token");
+        cookie.get("two_access_token") ||
+        sessionStorage?.getItem("two_access_token");
       setFilteredToken(token);
     }
   }, []);

@@ -30,6 +30,9 @@ const LogIn = () => {
   const router = useRouter();
 
   const handleLogin = async () => {
+    // Reset errors when a new login attempt is made
+    setErrors({});
+
     // Validate input
     const validationResult = loginSchema.safeParse({ email, password });
     if (!validationResult.success) {
@@ -44,24 +47,32 @@ const LogIn = () => {
         { email, password }
       );
       const data = response.data;
-      rememberMe
-        ? cookie.set("user_token", data.token)
-        : sessionStorage.setItem("user_token", data.token);
 
-      router.push("/").then(() => setIsLoading(false)); // Stop loading when routed
+      // Store the token based on rememberMe selection
+      rememberMe
+        ? cookie.set("two_access_token", data.token)
+        : sessionStorage.setItem("two_access_token", data.token);
+
+      // Clear errors and navigate after a successful login
+      setErrors({});
+      router.push("/").then(() => setIsLoading(false));
     } catch (error) {
       setIsLoading(false);
-      if (
-        error.response &&
-        error.response.data.message === "Incorrect password"
-      ) {
-        setErrors({ password: ["Incorrect password"] });
-      } else {
-        setErrors({
-          general:
-            error.response?.data.message || "Login failed. Please try again.",
-        });
-      }
+
+      // Add a small delay before showing the error message
+      setTimeout(() => {
+        if (
+          error.response &&
+          error.response.data.message === "Incorrect password"
+        ) {
+          setErrors({ password: ["Incorrect password"] });
+        } else {
+          setErrors({
+            general:
+              error.response?.data.message || "Login failed. Please try again.",
+          });
+        }
+      }, 500); // 500ms delay for better UX
     }
   };
 

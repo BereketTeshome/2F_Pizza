@@ -66,6 +66,8 @@ export default function CarouselComponent() {
                 <Button
                   variant="contained"
                   color="warning"
+                  component="a"
+                  href="#popularPizzas"
                   sx={{
                     fontWeight: "bold",
                     width: { xs: "100%", sm: "auto" }, // Full-width button on small screens

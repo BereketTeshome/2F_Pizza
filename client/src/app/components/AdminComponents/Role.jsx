@@ -36,7 +36,8 @@ const Role = () => {
         // Get token from local storage
         const cookie = new Cookies();
         const token =
-          cookie.get("user_token") || sessionStorage.getItem("user_token");
+          cookie.get("two_access_token") ||
+          sessionStorage.getItem("two_access_token");
         const decodedToken = token ? jwtDecode(token) : "";
         const restaurantname = decodedToken.restaurantname;
 

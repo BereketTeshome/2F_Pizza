@@ -47,8 +47,8 @@ const LogInAdmin = () => {
 
       const data = response.data;
       rememberMe
-        ? cookie.set("user_token", data.token)
-        : sessionStorage.setItem("user_token", data.token);
+        ? cookie.set("two_access_token", data.token)
+        : sessionStorage.setItem("two_access_token", data.token);
 
       router.push("/Dashboard");
     } catch (error) {

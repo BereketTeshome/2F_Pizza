@@ -21,12 +21,12 @@ const DashboardNav = ({ toggleSidebar }) => {
   const [logo, setLogo] = useState("");
 
   const cookie = new Cookies();
-  const token = cookie.get("user_token");
+  const token = cookie.get("two_access_token");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       // Check if we are in the browser
-      setFilteredToken(token || sessionStorage?.getItem("user_token"));
+      setFilteredToken(token || sessionStorage?.getItem("two_access_token"));
     }
   }, [token]);
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthToken, clearAuthToken } from "../../store/authSlice";
 import {
   AppBar,
   Toolbar,
@@ -14,26 +14,39 @@ import {
   MenuItem,
 } from "@mui/material";
 import Cookies from "universal-cookie";
-import { jwtDecode } from "jwt-decode";
+import Image from "next/image";
+import { useRouter } from "next/navigation"; // Import useRouter
+import Link from "next/link";
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [token, setToken] = useState(null); // state to hold the token
-  const [tabValue, setTabValue] = useState(0); // state to track the active tab
   const isDropdownOpen = Boolean(anchorEl);
   const cookie = new Cookies();
+
+  const dispatch = useDispatch();
+  const email = useSelector((state) => state.auth.email); // Get email from Redux
+  const isAdmin = useSelector((state) => state.auth.isAdmin); // Get admin status from Redux
+
+  const router = useRouter(); // useRouter to get current route
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userToken =
-        cookie.get("user_token") || sessionStorage.getItem("user_token");
-      setToken(userToken);
+        cookie.get("two_access_token") ||
+        sessionStorage.getItem("two_access_token");
+      if (userToken) {
+        dispatch(setAuthToken(userToken)); // Set the token in Redux
+      } else {
+        dispatch(clearAuthToken()); // Clear token in Redux if none found
+      }
     }
-  }, []);
-  const decodedToken = token ? jwtDecode(token) : "";
+  }, [dispatch]);
 
-  const email = decodedToken?.email;
-  const isAdmin = decodedToken?.isadmin;
+  const handleLogout = () => {
+    cookie.remove("two_access_token");
+    sessionStorage.removeItem("two_access_token");
+    dispatch(clearAuthToken()); // Clear token from Redux on logout
+  };
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -41,19 +54,6 @@ const Navbar = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    if (cookie.get("user_token")) {
-      cookie.remove("user_token");
-    } else if (sessionStorage.getItem("user_token")) {
-      sessionStorage.removeItem("user_token");
-    }
-    setToken(null); // Clear the token from state
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
   };
 
   return (
@@ -85,23 +85,25 @@ const Navbar = () => {
           </Typography>
         </Box>
 
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          textColor="inherit"
-          className="flex gap-16"
-        >
+        {/* Tabs with dynamic active state */}
+        <Tabs textColor="inherit" className="flex gap-16">
           <Tab
             label="Home"
             component={Link}
             href="/"
-            sx={{ "&:hover": { color: "orange" } }}
+            sx={{
+              "&:hover": { color: "orange" },
+              color: router.pathname === "/" ? "orange" : "inherit", // Active link color
+            }}
           />
           <Tab
             label="Orders"
             component={Link}
             href="/Orders"
-            sx={{ "&:hover": { color: "orange" } }}
+            sx={{
+              "&:hover": { color: "orange" },
+              color: router.pathname === "/Orders" ? "orange" : "inherit", // Active link color
+            }}
           />
         </Tabs>
 
@@ -142,7 +144,7 @@ const Navbar = () => {
               {isAdmin && (
                 <MenuItem
                   onClick={handleMenuClose}
-                  component={Link}
+                  component="a"
                   href="/Dashboard"
                 >
                   Dashboard
@@ -158,7 +160,7 @@ const Navbar = () => {
             variant="contained"
             color="warning"
             sx={{ fontWeight: "bold" }}
-            component={Link}
+            component="a"
             href="/Login"
           >
             Register

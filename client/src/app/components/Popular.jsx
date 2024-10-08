@@ -3,10 +3,12 @@ import { Box, Typography, Avatar, Button, Card, Divider } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const Popular = () => {
   const router = useRouter();
   const [pizzas, setPizzas] = useState([]);
+  const email = useSelector((state) => state.auth.email);
 
   useEffect(() => {
     // Fetch data from the API
@@ -79,7 +81,7 @@ const Popular = () => {
                 width: 300,
                 height: 300,
                 borderRadius: "50%",
-                overflow: "hidden", // Ensure the content is clipped to the rounded container
+                overflow: "hidden",
                 background: "#fbe6cc",
                 display: "flex",
                 justifyContent: "center",
@@ -93,7 +95,7 @@ const Popular = () => {
                 style={{
                   width: "80%",
                   height: "80%",
-                  borderRadius: "50%", // Make the image itself circular
+                  borderRadius: "50%",
                   objectFit: "cover",
                 }}
               />
@@ -144,19 +146,36 @@ const Popular = () => {
                   Birr
                 </Box>
               </Typography>
-              <Button
-                variant="contained"
-                color="warning"
-                sx={{
-                  textTransform: "none",
-                  px: 8,
-                  py: 1.5,
-                  fontSize: "1.3rem",
-                }}
-                onClick={() => handleOrderClick(pizza)}
-              >
-                Order
-              </Button>
+              {email ? (
+                <Button
+                  variant="contained"
+                  color="warning"
+                  sx={{
+                    textTransform: "none",
+                    px: 8,
+                    py: 1.5,
+                    fontSize: "1.3rem",
+                  }}
+                  onClick={() => handleOrderClick(pizza)}
+                >
+                  Order
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  component="a"
+                  href="/Login"
+                  color="warning"
+                  sx={{
+                    textTransform: "none",
+                    px: 8,
+                    py: 1.5,
+                    fontSize: "1.3rem",
+                  }}
+                >
+                  Order
+                </Button>
+              )}
             </Box>
 
             <Divider sx={{ width: "100%", mb: 2 }} />

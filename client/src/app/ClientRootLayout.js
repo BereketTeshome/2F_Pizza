@@ -5,12 +5,14 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import componentReducer from "../store/ComponentSlice";
+import authReducer from "../store/authSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 
 const store = configureStore({
   reducer: {
     component: componentReducer,
+    auth: authReducer,
   },
 });
 

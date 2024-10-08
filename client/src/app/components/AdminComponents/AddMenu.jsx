@@ -84,8 +84,10 @@ const AddMenu = () => {
 
     // Get the token from Cookies or sessionStorage
     const cookies = new Cookies();
-    const token = cookies.get("user_token");
-    const filteredToken = token ? token : sessionStorage?.getItem("user_token");
+    const token = cookies.get("two_access_token");
+    const filteredToken = token
+      ? token
+      : sessionStorage?.getItem("two_access_token");
 
     // Decode the token to extract the owner's name and image
     const decodedToken = filteredToken ? jwtDecode(filteredToken) : null;
