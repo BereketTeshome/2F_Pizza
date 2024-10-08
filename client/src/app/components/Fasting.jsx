@@ -2,9 +2,10 @@
 import { Box, Typography, Avatar, Button, Card, Divider } from "@mui/material";
 import { useRouter } from "next/navigation";
 import FastingPizzas from "../../store/Fasting";
-
+import { useSelector } from "react-redux";
 const Fasting = () => {
   const router = useRouter();
+  const email = useSelector((state) => state.auth.email);
   const handleOrderClick = (pizza) => {
     // Create a URL with query parameters
     const params = new URLSearchParams({
@@ -12,6 +13,7 @@ const Fasting = () => {
       ingredients: pizza.toppings.join(", "),
       price: pizza.price,
       image: pizza.image,
+      owner_name: pizza.owner_name,
     });
 
     router.push(`/OrderDetail?${params.toString()}`);
@@ -135,19 +137,36 @@ const Fasting = () => {
                   Birr
                 </Box>
               </Typography>
-              <Button
-                variant="contained"
-                color="warning"
-                sx={{
-                  textTransform: "none",
-                  px: 6,
-                  py: 1,
-                  fontSize: "1rem",
-                }}
-                onClick={() => handleOrderClick(pizza)}
-              >
-                Order
-              </Button>
+              {email ? (
+                <Button
+                  variant="contained"
+                  color="warning"
+                  sx={{
+                    textTransform: "none",
+                    px: 5,
+                    py: 1.2,
+                    fontSize: "1.1rem",
+                  }}
+                  onClick={() => handleOrderClick(pizza)}
+                >
+                  Order
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  component="a"
+                  href="/Login"
+                  color="warning"
+                  sx={{
+                    textTransform: "none",
+                    px: 5,
+                    py: 1.2,
+                    fontSize: "1.1rem",
+                  }}
+                >
+                  Order
+                </Button>
+              )}
             </Box>
 
             <Divider sx={{ width: "100%", mb: 2 }} />
